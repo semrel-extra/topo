@@ -23,7 +23,7 @@
     "build:es5:libdef": "tsc --emitDeclarationOnly --outDir target/es5",
     "build:es5:ext": "rename 's/\\.js$/\\.cjs/' target/es5/*.js",
     "test": "yarn test:unit",
-    "test:unit": "c8 -r html -r text loadr -- uvu 'src/test/' -i fixturess"
+    "test:unit": "c8 -r html -r text -r lcov loadr -- uvu 'src/test/' -i fixturess"
   },
   "repository": {
     "type": "git",
