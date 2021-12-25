@@ -18,7 +18,7 @@
     "build:es5": "yarn build:es5:target && yarn build:es5:libdef && yarn build:es5:ext",
     "build:es5:target": "node ./build.es5.cjs",
     "build:es5:libdef": "tsc --emitDeclarationOnly --outDir target/es5",
-    "build:es5:ext": "rename \"s/js$/cjs/\" target/es5/**/*.js",
+    "build:es5:ext": "rename 's/\\.js$/\\.cjs/' target/es5/*.js",
     "test": "yarn test:unit",
     "test:unit": "c8 -r html -r text loadr -- uvu 'src/test/' -i fixturess"
   },

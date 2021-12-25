@@ -52,17 +52,17 @@ export const getManifestsPaths = async ({workspaces, cwd}: ITopoOtions) =>
   (await glob(workspaces.map(w => slash(join(w, 'package.json'))), {
     cwd,
     onlyFiles: true,
-    absolute: true
+    absolute: true,
   }))
 
 // https://github.com/sindresorhus/slash/blob/b5cdd12272f94cfc37c01ac9c2b4e22973e258e5/index.js#L1
 export const slash = (path: string): string => {
-  const isExtendedLengthPath = /^\\\\\?\\/.test(path);
-  const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
+  const isExtendedLengthPath = /^\\\\\?\\/.test(path)
+  const hasNonAscii = /[^\u0000-\u0080]+/.test(path) // eslint-disable-line no-control-regex
 
   if (isExtendedLengthPath || hasNonAscii) {
-    return path;
+    return path
   }
 
-  return path.replace(/\\/g, '/');
+  return path.replace(/\\/g, '/')
 }
