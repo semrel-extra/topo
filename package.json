@@ -1,0 +1,50 @@
+{
+  "name": "@semrel-extra/topo",
+  "version": "0.0.0",
+  "description": "Helper to resolve monorepo dependencies graph",
+  "main": "./target/es6/index.mjs",
+  "type": "module",
+  "scripts": {
+    "build": "yarn build:es6 && yarn build:libdef && yarn build:esmfix",
+    "build:es6": "node ./build.js",
+    "build:libdef": "tsc --emitDeclarationOnly --outDir target/es6",
+    "build:esmfix": "tsc-esm-fix --target=target/es6 --ext=.mjs",
+    "test": "loadr -- uvu 'src/test/ts/'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antongolub/lockfile.git"
+  },
+  "keywords": [
+    "lock",
+    "lockfile",
+    "lockfile2",
+    "yarn",
+    "yarnlock",
+    "yarn.lock",
+    "package-lock",
+    "npm"
+  ],
+  "author": "Anton Golub <antongolub@antongolub.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/antongolub/lockfile/issues"
+  },
+  "homepage": "https://github.com/antongolub/lockfile#readme",
+  "packageManager": "yarn@3.1.1",
+  "dependencies": {
+    "@types/toposort": "^2.0.3",
+    "fast-glob": "^3.2.7",
+    "toposort": "^2.0.2",
+    "tslib": "^2.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.2",
+    "esbuild-node-externals": "^1.4.0",
+    "loadr": "^0.1.1",
+    "tsc-esm-fix": "^2.7.4",
+    "tsm": "^2.2.1",
+    "typescript": "^4.5.2",
+    "uvu": "^0.5.2"
+  }
+}
