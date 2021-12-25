@@ -2,15 +2,25 @@
   "name": "@semrel-extra/topo",
   "version": "0.0.0",
   "description": "Helper to resolve monorepo dependencies graph",
-  "main": "./target/es6/index.mjs",
+  "main": "./target/es5/index.cjs",
   "type": "module",
+  "exports": {
+    "require": "./target/es5/index.cjs",
+    "import": "./target/es6/index.mjs",
+    "module": "./target/es6/index.mjs"
+  },
   "scripts": {
-    "build": "yarn build:es6 && yarn build:libdef && yarn build:esmfix",
-    "build:es6": "node ./build.js",
-    "build:libdef": "tsc --emitDeclarationOnly --outDir target/es6",
-    "build:esmfix": "tsc-esm-fix --target=target/es6 --ext=.mjs",
+    "build": "yarn build:es6 && yarn build:es5",
+    "build:es6": "yarn build:es6:target && yarn build:es6:libdef && yarn build:es6:ext",
+    "build:es6:target": "node ./build.es6.cjs",
+    "build:es6:libdef": "tsc --emitDeclarationOnly --outDir target/es6",
+    "build:es6:ext": "tsc-esm-fix --target=target/es6 --ext=.mjs",
+    "build:es5": "yarn build:es5:target && yarn build:es5:libdef && yarn build:es5:ext",
+    "build:es5:target": "node ./build.es5.cjs",
+    "build:es5:libdef": "tsc --emitDeclarationOnly --outDir target/es5",
+    "build:es5:ext": "rename \"s/js$/cjs/\" target/es5/**/*.js",
     "test": "yarn test:unit",
-    "test:unit": "loadr -- uvu 'src/test/ts/'"
+    "test:unit": "c8 -r html -r text loadr -- uvu 'src/test/' -i fixturess"
   },
   "repository": {
     "type": "git",
@@ -40,6 +50,7 @@
     "tslib": "^2.3.1"
   },
   "devDependencies": {
+    "c8": "^7.10.0",
     "esbuild": "^0.14.2",
     "esbuild-node-externals": "^1.4.0",
     "loadr": "^0.1.1",
