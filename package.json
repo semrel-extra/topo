@@ -2,6 +2,9 @@
   "name": "@semrel-extra/topo",
   "version": "0.0.0",
   "description": "Helper to resolve monorepo dependencies graph",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./target/es5/index.cjs",
   "type": "module",
   "exports": {
