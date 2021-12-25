@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/lockfile.git"
+    "url": "git+https://github.com/semrel/topo.git"
   },
   "keywords": [
     "lock",
@@ -42,9 +42,9 @@
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/antongolub/lockfile/issues"
+    "url": "https://github.com/semrel/topo/issues"
   },
-  "homepage": "https://github.com/antongolub/lockfile#readme",
+  "homepage": "https://github.com/semrel/topo#readme",
   "packageManager": "yarn@3.1.1",
   "dependencies": {
     "@types/toposort": "^2.0.3",
