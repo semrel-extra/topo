@@ -3,12 +3,14 @@ const { nodeExternalsPlugin } = require('esbuild-node-externals')
 
 esbuild.build({
   entryPoints: ['./src/main/ts/index.ts'],
-  outfile: './target/es6/index.js',
-  bundle: true,
-  minify: true,
+  outfile: './target/es5/index.js',
+  bundle: false,
+  minify: false,
   platform: 'node',
-  sourcemap: true,
-  target: 'node14',
-  plugins: [nodeExternalsPlugin()]
+  sourcemap: false,
+  target: 'node10',
+  format: 'cjs',
+  plugins: [nodeExternalsPlugin()],
+  tsconfig: './tsconfig.json',
 })
   .catch(() => process.exit(1))
