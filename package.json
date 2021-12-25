@@ -9,7 +9,8 @@
     "build:es6": "node ./build.js",
     "build:libdef": "tsc --emitDeclarationOnly --outDir target/es6",
     "build:esmfix": "tsc-esm-fix --target=target/es6 --ext=.mjs",
-    "test": "loadr -- uvu 'src/test/ts/'"
+    "test": "yarn test:unit",
+    "test:unit": "loadr -- uvu 'src/test/ts/'"
   },
   "repository": {
     "type": "git",
