@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/semrel-extra/topo/compare/v1.0.0...v1.1.0) (2021-12-26)
+
+
+### Features
+
+* add nodes and edges to topoContext ([18f60c0](https://github.com/semrel-extra/topo/commit/18f60c09cbaec005b9110b369ba77053246de3db))
+
 # 1.0.0 (2021-12-25)
 
 
