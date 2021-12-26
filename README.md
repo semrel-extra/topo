@@ -20,7 +20,13 @@ const graph = topo({
 })
 
 {
-  queue: ['plk-a', 'pkg-b', 'pkg-x', 'pkg-y', 'pkg-x']
+  queue: ['pkg-a', 'pkg-b', 'pkg-z', 'pkg-y', 'pkg-x'],
+  nodes: ['pkg-a', 'pkg-b', 'pkg-x', 'pkg-y', 'pkg-z'],
+  edges: [
+    ['pkg-a', 'pkg-b'],
+    ['pkg-z', 'pkg-y'],
+    ['pkg-y', 'pkg-x'],
+  ]
 }
 ```
 

@@ -18,12 +18,22 @@ export interface IPackageJson {
   peerDependencies?: Record<string, string>
 }
 
-export const topo = async (otions: ITopoOtions): Promise<{ queue: string[] }> => {
+export interface ITopoContext {
+  queue: string[]
+  nodes: string[]
+  edges: [string, string | undefined][]
+}
+
+export const topo = async (otions: ITopoOtions): Promise<ITopoContext> => {
   const manifestsPaths = await getManifestsPaths(otions)
   const manifests = await Promise.all(manifestsPaths.map(p => readFile(p, 'utf-8').then(JSON.parse)))
   const { edges, nodes } = getGraph(manifests)
 
-  return { queue: toposort.array(nodes, edges) }
+  return {
+    queue: toposort.array(nodes, edges),
+    edges,
+    nodes,
+  }
 }
 
 export const getGraph = (manifests: IPackageJson[]): {
