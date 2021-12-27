@@ -5,11 +5,6 @@ import {promises} from 'fs'
 
 const {readFile} = promises
 
-export type ITopoOtions = {
-  workspaces: string[],
-  cwd: string
-}
-
 export interface IPackageJson {
   name: string
   dependencies?: Record<string, string>
@@ -24,6 +19,12 @@ export type IPackageEntry = {
   path: string
 }
 
+export type ITopoOptions = {
+  workspaces: string[]
+  cwd: string
+  filter?: (entry: IPackageEntry) => boolean
+}
+
 export interface ITopoContext {
   packages: Record<string, IPackageEntry>
   queue: string[]
@@ -31,23 +32,29 @@ export interface ITopoContext {
   edges: [string, string | undefined][]
 }
 
-export const getPackages = async (options: ITopoOtions): Promise<Record<string, IPackageEntry>> => {
+export const getPackages = async (options: ITopoOptions): Promise<Record<string, IPackageEntry>> => {
+  const filter = options.filter || (_ => true)
   const manifestsPaths = await getManifestsPaths(options)
   const manifests: IPackageJson[] = await Promise
     .all(manifestsPaths.map(p => readFile(p, 'utf-8')
     .then(JSON.parse)))
 
   return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
-    m[p.name] = {
+    const entry = {
       manifest: p,
       manifestPath: manifestsPaths[i],
       path: relative(options.cwd, dirname(manifestsPaths[i])),
     }
+
+    if (filter(entry)) {
+      m[p.name] = entry
+    }
+
     return m
   }, {})
 }
 
-export const topo = async (options: ITopoOtions): Promise<ITopoContext> => {
+export const topo = async (options: ITopoOptions): Promise<ITopoContext> => {
   const packages = await getPackages(options)
   const { edges, nodes } = getGraph(Object.values(packages).map(p => p.manifest))
   const queue = toposort.array(nodes, edges)
@@ -64,7 +71,7 @@ export const getGraph = (manifests: IPackageJson[]): {
   nodes: string[],
   edges: [string, string | undefined][]
 } => {
-  const nodes = manifests.map(({name}) => name)
+  const nodes = manifests.map(({name}) => name).sort()
   const edges = manifests.reduce<[string, string | undefined][]>((edges, pkg) => {
     Object.keys({
       ...pkg.dependencies,
@@ -74,7 +81,7 @@ export const getGraph = (manifests: IPackageJson[]): {
     }).forEach(_name => nodes.includes(_name) && edges.push([_name, pkg.name]))
 
     return edges
-  }, [])
+  }, []).sort()
 
   return {
     edges,
@@ -82,7 +89,7 @@ export const getGraph = (manifests: IPackageJson[]): {
   }
 }
 
-export const getManifestsPaths = async ({workspaces, cwd}: ITopoOtions) =>
+export const getManifestsPaths = async ({workspaces, cwd}: ITopoOptions) =>
   (await glob(workspaces.map(w => slash(join(w, 'package.json'))), {
     cwd,
     onlyFiles: true,
