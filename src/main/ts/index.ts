@@ -1,6 +1,6 @@
 import toposort from 'toposort'
 import glob from 'fast-glob'
-import {join} from 'path'
+import {dirname, join, relative} from 'path'
 import {promises} from 'fs'
 
 const {readFile} = promises
@@ -18,19 +18,43 @@ export interface IPackageJson {
   peerDependencies?: Record<string, string>
 }
 
+export type IPackageEntry = {
+  manifest: IPackageJson
+  manifestPath: string
+  path: string
+}
+
 export interface ITopoContext {
+  packages: Record<string, IPackageEntry>
   queue: string[]
   nodes: string[]
   edges: [string, string | undefined][]
 }
 
-export const topo = async (otions: ITopoOtions): Promise<ITopoContext> => {
-  const manifestsPaths = await getManifestsPaths(otions)
-  const manifests = await Promise.all(manifestsPaths.map(p => readFile(p, 'utf-8').then(JSON.parse)))
-  const { edges, nodes } = getGraph(manifests)
+export const getPackages = async (options: ITopoOtions): Promise<Record<string, IPackageEntry>> => {
+  const manifestsPaths = await getManifestsPaths(options)
+  const manifests: IPackageJson[] = await Promise
+    .all(manifestsPaths.map(p => readFile(p, 'utf-8')
+    .then(JSON.parse)))
+
+  return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
+    m[p.name] = {
+      manifest: p,
+      manifestPath: manifestsPaths[i],
+      path: relative(options.cwd, dirname(manifestsPaths[i])),
+    }
+    return m
+  }, {})
+}
+
+export const topo = async (options: ITopoOtions): Promise<ITopoContext> => {
+  const packages = await getPackages(options)
+  const { edges, nodes } = getGraph(Object.values(packages).map(p => p.manifest))
+  const queue = toposort.array(nodes, edges)
 
   return {
-    queue: toposort.array(nodes, edges),
+    queue,
+    packages,
     edges,
     nodes,
   }

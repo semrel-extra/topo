@@ -16,7 +16,8 @@ yarn add @semrel-extra/topo
 import { topo } from '@semrel-extra/topo'
 
 const graph = topo({
-  workspaces: ['packages/*']
+  workspaces: ['packages/*'],
+  cwd: '/path/to/project/root'
 })
 
 {
@@ -26,7 +27,19 @@ const graph = topo({
     ['pkg-a', 'pkg-b'],
     ['pkg-z', 'pkg-y'],
     ['pkg-y', 'pkg-x'],
-  ]
+  ],
+  packages: {
+    'pkg-a': {
+      manifest: {
+        name: 'pkg-a',
+        dependencies: {}
+      },
+      manifestPath: '/absolute/path/to/packages/a/package.json',
+      path: 'packages/pkg-a'
+    },
+    'pkg-b': {...},
+    ...
+  }
 }
 ```
 
