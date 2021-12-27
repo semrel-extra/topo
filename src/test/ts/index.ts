@@ -27,6 +27,32 @@ test('`topo` returns monorepo release queue', async () => {
     edges: [
       [ 'e', 'c' ]
     ],
+    packages: {
+      a: {
+        manifest: {
+          name: 'a'
+        },
+        manifestPath: join(cwd, 'packages/a/package.json'),
+        path: 'packages/a'
+      },
+      c: {
+        manifest: {
+          name: 'c',
+          dependencies: {
+            e: '*'
+          },
+        },
+        manifestPath: join(cwd, 'packages/c/package.json'),
+        path: 'packages/c'
+      },
+      e: {
+        manifest: {
+          name: 'e'
+        },
+        manifestPath: join(cwd, 'packages/e/package.json'),
+        path: 'packages/e'
+      }
+    }
   }
 
   assert.equal(result, expected)
