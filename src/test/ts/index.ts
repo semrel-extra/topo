@@ -17,7 +17,7 @@ test('`getManifestsPaths` returns absolute package.json refs', async () => {
   assert.equal(result, expected)
 })
 
-test('`topo` returns monorepo release queue', async () => {
+test('`topo` returns monorepo digest: release queue, deps graph, package manifests', async () => {
   const cwd = resolve(fixtures, 'regular-monorepo')
   const workspaces = ['packages/*']
   const result = await topo({cwd, workspaces})
