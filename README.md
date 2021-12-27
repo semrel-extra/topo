@@ -35,7 +35,7 @@ const graph = topo({
         name: 'pkg-a',
         dependencies: {}
       },
-      manifestPath: '/absolute/path/to/packages/a/package.json',
+      manifestPath: '/path/to/project/root/packages/a/package.json',
       path: 'packages/pkg-a'
     },
     'pkg-b': {...},
