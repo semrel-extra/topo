@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/semrel-extra/topo/compare/v1.1.0...v1.2.0) (2021-12-27)
+
+
+### Features
+
+* add pkg manifests to topoContext ([117a0b2](https://github.com/semrel-extra/topo/commit/117a0b2a893d0d164f1db769776c10f8beda8644))
+
 # [1.1.0](https://github.com/semrel-extra/topo/compare/v1.0.0...v1.1.0) (2021-12-26)
 
 
