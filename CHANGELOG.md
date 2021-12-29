@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/semrel-extra/topo/compare/v1.2.0...v1.3.0) (2021-12-29)
+
+
+### Features
+
+* add packages filter ([c3e49f4](https://github.com/semrel-extra/topo/commit/c3e49f41889a14b7be21200853ba5ee0fc6e5bdd)), closes [#6](https://github.com/semrel-extra/topo/issues/6)
+
 # [1.2.0](https://github.com/semrel-extra/topo/compare/v1.1.0...v1.2.0) (2021-12-27)
 
 
