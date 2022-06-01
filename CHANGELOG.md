@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/semrel-extra/topo/compare/v1.3.0...v1.3.1) (2022-06-01)
+
+
+### Performance Improvements
+
+* up deps ([4237a6c](https://github.com/semrel-extra/topo/commit/4237a6cba1ec7a3ec7942d3e76961aea3496b043))
+
 # [1.3.0](https://github.com/semrel-extra/topo/compare/v1.2.0...v1.3.0) (2021-12-29)
 
 
