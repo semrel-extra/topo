@@ -52,19 +52,19 @@
     "@types/toposort": "^2.0.3",
     "fast-glob": "^3.2.11",
     "toposort": "^2.0.2",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.2",
-    "c8": "^7.11.0",
-    "esbuild": "^0.14.23",
+    "c8": "^7.11.3",
+    "esbuild": "^0.14.42",
     "esbuild-node-externals": "^1.4.1",
     "loadr": "^0.1.1",
-    "micromatch": "^4.0.4",
-    "prettier": "^2.5.1",
-    "tsc-esm-fix": "^2.7.7",
+    "micromatch": "^4.0.5",
+    "prettier": "^2.6.2",
+    "tsc-esm-fix": "^2.15.1",
     "tsm": "^2.2.1",
-    "typescript": "^4.5.5",
+    "typescript": "^4.7.2",
     "uvu": "^0.5.3"
   },
   "prettier": {
