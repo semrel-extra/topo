@@ -17,6 +17,8 @@ export type IPackageEntry = {
   manifest: IPackageJson
   manifestPath: string
   path: string
+  absPath: string
+  relPath: string
 }
 
 export type ITopoOptions = {
@@ -42,10 +44,14 @@ export const getPackages = async (
   )
 
   return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
+    const absPath = dirname(manifestsPaths[i])
+    const relPath = relative(options.cwd, absPath)
     const entry = {
       manifest: p,
       manifestPath: manifestsPaths[i],
-      path: relative(options.cwd, dirname(manifestsPaths[i]))
+      path: relPath, // legacy
+      relPath,
+      absPath
     }
 
     if (filter(entry)) {

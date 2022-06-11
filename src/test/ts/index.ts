@@ -35,7 +35,9 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
           private: true
         },
         manifestPath: join(cwd, 'packages/a/package.json'),
-        path: 'packages/a'
+        path: 'packages/a',
+        relPath: 'packages/a',
+        absPath: resolve(cwd, 'packages/a')
       },
       c: {
         manifest: {
@@ -45,14 +47,18 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
           }
         },
         manifestPath: join(cwd, 'packages/c/package.json'),
-        path: 'packages/c'
+        path: 'packages/c',
+        relPath: 'packages/c',
+        absPath: resolve(cwd, 'packages/c')
       },
       e: {
         manifest: {
           name: 'e'
         },
         manifestPath: join(cwd, 'packages/e/package.json'),
-        path: 'packages/e'
+        path: 'packages/e',
+        relPath: 'packages/e',
+        absPath: resolve(cwd, 'packages/e')
       }
     }
   }
@@ -80,14 +86,18 @@ test('`topo` applies filter', async () => {
           }
         },
         manifestPath: join(cwd, 'packages/c/package.json'),
-        path: 'packages/c'
+        path: 'packages/c',
+        relPath: 'packages/c',
+        absPath: resolve(cwd, 'packages/c')
       },
       e: {
         manifest: {
           name: 'e'
         },
         manifestPath: join(cwd, 'packages/e/package.json'),
-        path: 'packages/e'
+        path: 'packages/e',
+        relPath: 'packages/e',
+        absPath: resolve(cwd, 'packages/e')
       }
     }
   }
