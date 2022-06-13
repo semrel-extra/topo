@@ -1,3 +1,13 @@
+# [1.4.0](https://github.com/semrel-extra/topo/compare/v1.3.1...v1.4.0) (2022-06-13)
+
+
+### Features
+
+* add abs pkg path to entry data ([7271961](https://github.com/semrel-extra/topo/commit/727196118e028b6f7258e0d42787c1b362d38a37))
+* add pkg name to entry ([f80aa8d](https://github.com/semrel-extra/topo/commit/f80aa8d16aeb4a55efa5fcd9acad959726e00817))
+* add root pkg entry to context ([5d670cc](https://github.com/semrel-extra/topo/commit/5d670cccc2ba631a7650ee09cd1b1f186333cd4e))
+* check pkg names duplicates ([6c18d81](https://github.com/semrel-extra/topo/commit/6c18d81e9cb96502e00dc02c0215f0d21c5ca932))
+
 ## [1.3.1](https://github.com/semrel-extra/topo/compare/v1.3.0...v1.3.1) (2022-06-01)
 
 
