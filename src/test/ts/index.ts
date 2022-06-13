@@ -110,4 +110,17 @@ test('`topo` applies filter', async () => {
   assert.equal(result, expected)
 })
 
+test.only('`topo` throws error on duplicated pkg names', async () => {
+  const cwd = resolve(fixtures, 'broken-monorepo')
+  const workspaces = ['packages/*']
+
+  try {
+    await topo({ cwd, workspaces })
+    assert.unreachable()
+  } catch (err: any) {
+    assert.instance(err, Error)
+    assert.match(err.message, 'Duplicated pkg names: a')
+  }
+})
+
 test.run()

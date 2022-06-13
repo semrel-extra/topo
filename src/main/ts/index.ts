@@ -43,6 +43,13 @@ export const getPackages = async (
     manifestsPaths.map(p => readFile(p, 'utf-8').then(JSON.parse))
   )
 
+  const duplicates = manifests
+    .map(m => m.name)
+    .filter((e, i, a) => a.indexOf(e) !== i)
+  if (duplicates.length > 0) {
+    throw new Error(`Duplicated pkg names: ${duplicates.join(', ')}`)
+  }
+
   return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
     const absPath = dirname(manifestsPaths[i])
     const relPath = relative(options.cwd, absPath)
