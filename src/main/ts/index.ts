@@ -22,10 +22,12 @@ export type IPackageEntry = {
   relPath: string
 }
 
-export type ITopoOptions = {
+export type ITopoOptions = Partial<ITopoOptionsNormalized>
+
+export type ITopoOptionsNormalized = {
   workspaces: string[]
   cwd: string
-  filter?: (entry: IPackageEntry) => boolean
+  filter: (entry: IPackageEntry) => boolean
 }
 
 export interface ITopoContext {
@@ -37,7 +39,7 @@ export interface ITopoContext {
 }
 
 export const getPackages = async (
-  options: ITopoOptions
+  options: ITopoOptionsNormalized
 ): Promise<Record<string, IPackageEntry>> => {
   const filter = options.filter || (_ => true)
   const manifestsPaths = await getManifestsPaths(options)
@@ -71,11 +73,18 @@ export const getPackages = async (
   }, {})
 }
 
-export const topo = async (options: ITopoOptions): Promise<ITopoContext> => {
-  const rootManifestPath = resolve(options.cwd, 'package.json')
+export const topo = async (
+  options: ITopoOptions = {}
+): Promise<ITopoContext> => {
+  const { cwd = process.cwd(), filter = _ => true } = options
+  const rootManifestPath = resolve(cwd, 'package.json')
   const rootManifest = await readJsonFile(rootManifestPath)
-  options.workspaces = options.workspaces || rootManifest.workspaces
-  const packages = await getPackages(options)
+  const _options: ITopoOptionsNormalized = {
+    cwd,
+    filter,
+    workspaces: options.workspaces || rootManifest.workspaces
+  }
+  const packages = await getPackages(_options)
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
@@ -126,7 +135,10 @@ export const getGraph = (
   }
 }
 
-export const getManifestsPaths = async ({ workspaces, cwd }: ITopoOptions) =>
+export const getManifestsPaths = async ({
+  workspaces,
+  cwd
+}: ITopoOptionsNormalized) =>
   await glob(
     workspaces.map(w => slash(join(w, 'package.json'))),
     {
