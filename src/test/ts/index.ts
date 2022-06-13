@@ -30,6 +30,7 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
     edges: [['e', 'c']],
     packages: {
       a: {
+        name: 'a',
         manifest: {
           name: 'a',
           private: true
@@ -40,6 +41,7 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
         absPath: resolve(cwd, 'packages/a')
       },
       c: {
+        name: 'c',
         manifest: {
           name: 'c',
           dependencies: {
@@ -52,6 +54,7 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
         absPath: resolve(cwd, 'packages/c')
       },
       e: {
+        name: 'e',
         manifest: {
           name: 'e'
         },
@@ -79,6 +82,7 @@ test('`topo` applies filter', async () => {
     edges: [['e', 'c']],
     packages: {
       c: {
+        name: 'c',
         manifest: {
           name: 'c',
           dependencies: {
@@ -91,6 +95,7 @@ test('`topo` applies filter', async () => {
         absPath: resolve(cwd, 'packages/c')
       },
       e: {
+        name: 'e',
         manifest: {
           name: 'e'
         },

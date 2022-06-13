@@ -47,6 +47,7 @@ export const getPackages = async (
     const absPath = dirname(manifestsPaths[i])
     const relPath = relative(options.cwd, absPath)
     const entry = {
+      name: p.name,
       manifest: p,
       manifestPath: manifestsPaths[i],
       path: relPath, // legacy
