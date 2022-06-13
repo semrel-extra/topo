@@ -1,9 +1,10 @@
 import toposort from 'toposort'
 import glob from 'fast-glob'
-import { dirname, join, relative } from 'path'
-import { promises } from 'fs'
+import { dirname, join, relative, resolve } from 'path'
+import { promises as fs } from 'fs'
 
-const { readFile } = promises
+const readJsonFile = async (filepath: string) =>
+  JSON.parse(await fs.readFile(filepath, 'utf8'))
 
 export interface IPackageJson {
   name: string
@@ -32,6 +33,7 @@ export interface ITopoContext {
   queue: string[]
   nodes: string[]
   edges: [string, string | undefined][]
+  root: IPackageEntry
 }
 
 export const getPackages = async (
@@ -40,9 +42,8 @@ export const getPackages = async (
   const filter = options.filter || (_ => true)
   const manifestsPaths = await getManifestsPaths(options)
   const manifests: IPackageJson[] = await Promise.all(
-    manifestsPaths.map(p => readFile(p, 'utf-8').then(JSON.parse))
+    manifestsPaths.map(p => readJsonFile(p))
   )
-
   const duplicates = manifests
     .map(m => m.name)
     .filter((e, i, a) => a.indexOf(e) !== i)
@@ -71,17 +72,29 @@ export const getPackages = async (
 }
 
 export const topo = async (options: ITopoOptions): Promise<ITopoContext> => {
+  const rootManifestPath = resolve(options.cwd, 'package.json')
+  const rootManifest = await readJsonFile(rootManifestPath)
+  options.workspaces = options.workspaces || rootManifest.workspaces
   const packages = await getPackages(options)
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
   const queue = toposort.array(nodes, edges)
+  const root = {
+    name: rootManifest.name,
+    manifest: rootManifest,
+    manifestPath: rootManifestPath,
+    path: '/',
+    relPath: '/',
+    absPath: dirname(rootManifestPath)
+  }
 
   return {
     queue,
     packages,
     edges,
-    nodes
+    nodes,
+    root
   }
 }
 

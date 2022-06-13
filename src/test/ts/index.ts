@@ -63,6 +63,16 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
         relPath: 'packages/e',
         absPath: resolve(cwd, 'packages/e')
       }
+    },
+    root: {
+      name: 'root',
+      manifest: {
+        name: 'root'
+      },
+      manifestPath: join(cwd, 'package.json'),
+      path: '/',
+      relPath: '/',
+      absPath: resolve(cwd)
     }
   }
 
@@ -104,13 +114,23 @@ test('`topo` applies filter', async () => {
         relPath: 'packages/e',
         absPath: resolve(cwd, 'packages/e')
       }
+    },
+    root: {
+      name: 'root',
+      manifest: {
+        name: 'root'
+      },
+      manifestPath: join(cwd, 'package.json'),
+      path: '/',
+      relPath: '/',
+      absPath: resolve(cwd)
     }
   }
 
   assert.equal(result, expected)
 })
 
-test.only('`topo` throws error on duplicated pkg names', async () => {
+test('`topo` throws error on duplicated pkg names', async () => {
   const cwd = resolve(fixtures, 'broken-monorepo')
   const workspaces = ['packages/*']
 
