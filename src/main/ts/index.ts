@@ -8,13 +8,15 @@ const readJsonFile = async (filepath: string) =>
 
 export interface IPackageJson {
   name: string
+  workspaces?: string[]
   dependencies?: Record<string, string>
   devDependencies?: Record<string, string>
   optionalDependencies?: Record<string, string>
   peerDependencies?: Record<string, string>
 }
 
-export type IPackageEntry = {
+export interface IPackageEntry {
+  name: string
   manifest: IPackageJson
   manifestPath: string
   path: string
@@ -46,12 +48,8 @@ export const getPackages = async (
   const manifests: IPackageJson[] = await Promise.all(
     manifestsPaths.map(p => readJsonFile(p))
   )
-  const duplicates = manifests
-    .map(m => m.name)
-    .filter((e, i, a) => a.indexOf(e) !== i)
-  if (duplicates.length > 0) {
-    throw new Error(`Duplicated pkg names: ${duplicates.join(', ')}`)
-  }
+
+  checkDuplicates(manifests)
 
   return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
     const absPath = dirname(manifestsPaths[i])
@@ -73,30 +71,44 @@ export const getPackages = async (
   }, {})
 }
 
+const checkDuplicates = (manifests: IPackageJson[]): void => {
+  const duplicates = manifests
+    .map(m => m.name)
+    .filter((e, i, a) => a.indexOf(e) !== i)
+  if (duplicates.length > 0) {
+    throw new Error(`Duplicated pkg names: ${duplicates.join(', ')}`)
+  }
+}
+
+export const getRootPackage = async (cwd: string): Promise<IPackageEntry> => {
+  const manifestPath = resolve(cwd, 'package.json')
+  const manifest = await readJsonFile(manifestPath)
+
+  return {
+    name: manifest.name,
+    manifest,
+    manifestPath,
+    path: '/',
+    relPath: '/',
+    absPath: dirname(manifestPath)
+  }
+}
+
 export const topo = async (
   options: ITopoOptions = {}
 ): Promise<ITopoContext> => {
   const { cwd = process.cwd(), filter = _ => true } = options
-  const rootManifestPath = resolve(cwd, 'package.json')
-  const rootManifest = await readJsonFile(rootManifestPath)
+  const root = await getRootPackage(cwd)
   const _options: ITopoOptionsNormalized = {
     cwd,
     filter,
-    workspaces: options.workspaces || rootManifest.workspaces
+    workspaces: options.workspaces || root.manifest.workspaces || []
   }
   const packages = await getPackages(_options)
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
   const queue = toposort.array(nodes, edges)
-  const root = {
-    name: rootManifest.name,
-    manifest: rootManifest,
-    manifestPath: rootManifestPath,
-    path: '/',
-    relPath: '/',
-    absPath: dirname(rootManifestPath)
-  }
 
   return {
     queue,
