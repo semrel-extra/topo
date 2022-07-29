@@ -6,6 +6,7 @@
     "access": "public"
   },
   "main": "./target/es5/index.cjs",
+  "types": "./target/es5/index.d.ts",
   "type": "module",
   "exports": {
     "require": "./target/es5/index.cjs",
