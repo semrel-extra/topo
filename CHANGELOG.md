@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/semrel-extra/topo/compare/v1.4.2...v1.4.3) (2022-07-29)
+
+
+### Bug Fixes
+
+* add missing `types` field to pkg.json ([ece19f3](https://github.com/semrel-extra/topo/commit/ece19f33148b98dbe50b36c64bcef4cb290dfee8)), closes [#13](https://github.com/semrel-extra/topo/issues/13)
+
 ## [1.4.2](https://github.com/semrel-extra/topo/compare/v1.4.1...v1.4.2) (2022-07-03)
 
 ## [1.4.1](https://github.com/semrel-extra/topo/compare/v1.4.0...v1.4.1) (2022-06-13)
