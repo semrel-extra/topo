@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/semrel-extra/topo/compare/v1.4.3...v1.4.4) (2023-01-05)
+
+
+### Bug Fixes
+
+* update fast-glob to v3.2.12 ([d414511](https://github.com/semrel-extra/topo/commit/d414511f09142e194642330283718b1f6eb3fedd))
+
 ## [1.4.3](https://github.com/semrel-extra/topo/compare/v1.4.2...v1.4.3) (2022-07-29)
 
 
