@@ -1,5 +1,5 @@
-import toposort from 'toposort'
 import glob from 'fast-glob'
+import { analyze } from 'toposource'
 import { dirname, join, relative, resolve } from 'path'
 import { promises as fs } from 'fs'
 
@@ -108,7 +108,7 @@ export const topo = async (
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
-  const queue = toposort.array(nodes, edges)
+  const queue = analyze([...edges, ...nodes.map<[string]>(n => [n])]).queue
 
   return {
     queue,
@@ -123,11 +123,11 @@ export const getGraph = (
   manifests: IPackageJson[]
 ): {
   nodes: string[]
-  edges: [string, string | undefined][]
+  edges: [string, string][]
 } => {
   const nodes = manifests.map(({ name }) => name).sort()
   const edges = manifests
-    .reduce<[string, string | undefined][]>((edges, pkg) => {
+    .reduce<[string, string][]>((edges, pkg) => {
       Object.keys({
         ...pkg.dependencies,
         ...pkg.devDependencies,

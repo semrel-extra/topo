@@ -224,11 +224,6 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
-"@types/toposort@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@types/toposort/-/toposort-2.0.3.tgz#dc490842b77c3e910c8d727ff0bdb2fb124cb41b"
-  integrity sha512-jRtyvEu0Na/sy0oIxBW0f6wPQjidgVqlmCTJVHEGTNEUdL1f0YSvdPzHY7nX7MUWAZS6zcAa0KkqofHjy/xDZQ==
-
 ansi-regex@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
@@ -1296,10 +1291,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-toposort@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/toposort/-/toposort-2.0.2.tgz#ae21768175d1559d48bef35420b2f4962f09c330"
-  integrity sha1-riF2gXXRVZ1IvvNUILL0li8JwzA=
+toposource@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/toposource/-/toposource-1.1.1.tgz#e7b1bd15875b2a5aa57d8d2d2f57efd2c11292ec"
+  integrity sha512-DROwRDkdeJj91yLtcCCaX54uqGTTHbs5EqyqE3zkF2vxi0fIqV1jawG6OpR8UOLw5/Vmu9O5PAn+uLh6/TMsrQ==
 
 trim-newlines@^4.0.2:
   version "4.0.2"
