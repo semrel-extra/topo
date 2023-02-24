@@ -1,3 +1,8 @@
+## [1.5.0](https://github.com/semrel-extra/topo/compare/v1.4.4...v1.5.0) (2023-02-24)
+
+### Features
+* feat: mix toposource `graphs` to result ([db00d12](https://github.com/semrel-extra/topo/commit/db00d128d584d57cea9012a7f475cbdcba515958))
+
 ## [1.4.4](https://github.com/semrel-extra/topo/compare/v1.4.3...v1.4.4) (2023-01-05)
 
 
