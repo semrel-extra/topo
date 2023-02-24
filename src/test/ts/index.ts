@@ -12,7 +12,9 @@ const fixtures = resolve(__dirname, '../fixtures')
 test('`getManifestsPaths` returns absolute package.json refs', async () => {
   const cwd = resolve(fixtures, 'regular-monorepo')
   const workspaces = ['packages/**/*/', '!packages/e']
-  const result = (await getManifestsPaths({ cwd, workspaces })).sort()
+  const result = (
+    await getManifestsPaths({ cwd, workspaces, filter: () => true })
+  ).sort()
   const expected = ['a', 'c', 'd/d/d'].map(f =>
     join(cwd, 'packages', f, 'package.json')
   )
@@ -73,7 +75,19 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
       path: '/',
       relPath: '/',
       absPath: resolve(cwd)
-    }
+    },
+    graphs: [
+      {
+        nodes: new Set(['a']),
+        sources: ['a']
+      },
+      {
+        nodes: new Set(['c', 'e']),
+        sources: ['e']
+      }
+    ],
+    next: new Map([['e', ['c']]]),
+    prev: new Map([['c', ['e']]])
   }
 
   assert.equal(result, expected)
@@ -124,7 +138,15 @@ test('`topo` applies filter', async () => {
       path: '/',
       relPath: '/',
       absPath: resolve(cwd)
-    }
+    },
+    graphs: [
+      {
+        nodes: new Set(['c', 'e']),
+        sources: ['e']
+      }
+    ],
+    next: new Map([['e', ['c']]]),
+    prev: new Map([['c', ['e']]])
   }
 
   assert.equal(result, expected)

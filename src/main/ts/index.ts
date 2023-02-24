@@ -3,42 +3,15 @@ import { analyze } from 'toposource'
 import { dirname, join, relative, resolve } from 'path'
 import { promises as fs } from 'fs'
 
-const readJsonFile = async (filepath: string) =>
-  JSON.parse(await fs.readFile(filepath, 'utf8'))
+import {
+  ITopoOptionsNormalized,
+  IPackageEntry,
+  IPackageJson,
+  ITopoOptions,
+  ITopoContext
+} from './interface'
 
-export interface IPackageJson {
-  name: string
-  workspaces?: string[]
-  dependencies?: Record<string, string>
-  devDependencies?: Record<string, string>
-  optionalDependencies?: Record<string, string>
-  peerDependencies?: Record<string, string>
-}
-
-export interface IPackageEntry {
-  name: string
-  manifest: IPackageJson
-  manifestPath: string
-  path: string
-  absPath: string
-  relPath: string
-}
-
-export type ITopoOptions = Partial<ITopoOptionsNormalized>
-
-export type ITopoOptionsNormalized = {
-  workspaces: string[]
-  cwd: string
-  filter: (entry: IPackageEntry) => boolean
-}
-
-export interface ITopoContext {
-  packages: Record<string, IPackageEntry>
-  queue: string[]
-  nodes: string[]
-  edges: [string, string | undefined][]
-  root: IPackageEntry
-}
+export * from './interface'
 
 export const getPackages = async (
   options: ITopoOptionsNormalized
@@ -108,13 +81,19 @@ export const topo = async (
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
-  const queue = analyze([...edges, ...nodes.map<[string]>(n => [n])]).queue
+  const { queue, graphs, next, prev } = analyze([
+    ...edges,
+    ...nodes.map<[string]>(n => [n])
+  ])
 
   return {
-    queue,
-    packages,
-    edges,
     nodes,
+    edges,
+    queue,
+    graphs,
+    prev,
+    next,
+    packages,
     root
   }
 }
@@ -159,6 +138,9 @@ export const getManifestsPaths = async ({
       absolute: true
     }
   )
+
+const readJsonFile = async (filepath: string) =>
+  JSON.parse(await fs.readFile(filepath, 'utf8'))
 
 // https://github.com/sindresorhus/slash/blob/b5cdd12272f94cfc37c01ac9c2b4e22973e258e5/index.js#L1
 export const slash = (path: string): string => {
