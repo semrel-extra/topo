@@ -1,3 +1,8 @@
+## [1.6.0](https://github.com/semrel-extra/topo/compare/v1.5.0...v1.6.0) (2023-03-16)
+
+### Features
+* feat: mix graph sources to result ([fb00824](https://github.com/semrel-extra/topo/commit/fb00824ec8ce469febeca302104190cd4f5693f3))
+
 ## [1.5.0](https://github.com/semrel-extra/topo/compare/v1.4.4...v1.5.0) (2023-02-24)
 
 ### Features
