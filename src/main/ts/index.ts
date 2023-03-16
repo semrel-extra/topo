@@ -81,7 +81,7 @@ export const topo = async (
   const { edges, nodes } = getGraph(
     Object.values(packages).map(p => p.manifest)
   )
-  const { queue, graphs, next, prev } = analyze([
+  const { queue, graphs, next, prev, sources } = analyze([
     ...edges,
     ...nodes.map<[string]>(n => [n])
   ])
@@ -91,6 +91,7 @@ export const topo = async (
     edges,
     queue,
     graphs,
+    sources,
     prev,
     next,
     packages,

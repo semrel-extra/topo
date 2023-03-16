@@ -32,6 +32,7 @@ export interface ITopoContext {
   nodes: string[]
   edges: [string, string | undefined][]
   queue: string[]
+  sources: string[]
   graphs: TGraph[]
   next: TDepMap
   prev: TDepMap

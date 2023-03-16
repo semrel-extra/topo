@@ -30,6 +30,7 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
     queue: ['a', 'e', 'c'],
     nodes: ['a', 'c', 'e'],
     edges: [['e', 'c']],
+    sources: ['a', 'e'],
     packages: {
       a: {
         name: 'a',
@@ -104,6 +105,7 @@ test('`topo` applies filter', async () => {
     queue: ['e', 'c'],
     nodes: ['c', 'e'],
     edges: [['e', 'c']],
+    sources: ['e'],
     packages: {
       c: {
         name: 'c',
