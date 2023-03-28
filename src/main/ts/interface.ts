@@ -18,12 +18,19 @@ export interface IPackageEntry {
   relPath: string
 }
 
+export interface IDepEntry {
+  name: string
+  version: string
+}
+
 export type ITopoOptions = Partial<ITopoOptionsNormalized>
 
 export type ITopoOptionsNormalized = {
   workspaces: string[]
   cwd: string
   filter: (entry: IPackageEntry) => boolean
+  pkgFilter: (entry: IPackageEntry) => boolean
+  depFilter: (entry: IDepEntry) => boolean
 }
 
 export interface ITopoContext {
