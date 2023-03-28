@@ -3,17 +3,6 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  init:
-    name: init
-    runs-on: ubuntu-22.04
-    outputs:
-      skip: ${{ steps.ci-skip-step.outputs.ci-skip }}
-      skip-not: ${{ steps.ci-skip-step.outputs.ci-skip-not }}
-    steps:
-      - uses: actions/checkout@v3
-      - id: ci-skip-step
-        uses: mstachniuk/ci-skip@v1
-
   test_push:
     name: Test on push
     if: github.event_name == 'push'
@@ -28,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Fetch deps
         run: yarn
@@ -45,7 +34,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-22.04 ]
-        node-version: [ 12, 16 ]
+        node-version: [ 14, 18 ]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -87,16 +76,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Fetch deps
         run: yarn
 
       - name: Build
         run: yarn build
-
-      - name: Run tests
-        run: yarn test
 
       - name: Codeclimate
         uses: paambaati/codeclimate-action@v3.2.0

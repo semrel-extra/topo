@@ -46,13 +46,23 @@ const graph = topo({
 }
 ```
 
-### `filter()`
+### `pkgFilter() / filter()`
 Filter option is a function: gets `IPackageEntry` as argument, returns `boolean`
 ```ts
 const graph = topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root',
   filter: ({manifest}) => !manifest.private // to omit private packages from graph
+})
+```
+
+### `depFilter()`
+Applies filter to any kind of pkg dependencies to omit them from the graph
+```ts
+const gpaph = topo({
+  workspaces: ['packages/*'],
+  cwd: '/path/to/project/root',
+  depFilter: ({version}) => version.startsWith('workspace:') // include only workspace deps
 })
 ```
 
