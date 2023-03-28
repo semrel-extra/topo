@@ -84,6 +84,9 @@ jobs:
       - name: Build
         run: yarn build
 
+      - name: Run tests
+        run: yarn test
+
       - name: Codeclimate
         uses: paambaati/codeclimate-action@v3.2.0
         env:
