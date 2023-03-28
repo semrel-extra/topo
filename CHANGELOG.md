@@ -1,3 +1,8 @@
+## [1.7.0](https://github.com/semrel-extra/topo/compare/v1.6.0...v1.7.0) (2023-03-28)
+
+### Features
+* feat: introduce `depFilter` option ([9a0eeec](https://github.com/semrel-extra/topo/commit/9a0eeec784cbc40efa2fc8a20a9c172d4cd686a5))
+
 ## [1.6.0](https://github.com/semrel-extra/topo/compare/v1.5.0...v1.6.0) (2023-03-16)
 
 ### Features
