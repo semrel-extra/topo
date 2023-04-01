@@ -1,3 +1,8 @@
+## [1.8.1](https://github.com/semrel-extra/topo/compare/v1.8.0...v1.8.1) (2023-04-01)
+
+### Fixes & improvements
+* fix: add missing iface reexport ([57d391a](https://github.com/semrel-extra/topo/commit/57d391a39dbbcabfec1eb4d078920fc0b0674d4c))
+
 ## [1.8.0](https://github.com/semrel-extra/topo/compare/v1.7.0...v1.8.0) (2023-04-01)
 
 ### Features
