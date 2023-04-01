@@ -1,3 +1,8 @@
+## [1.8.0](https://github.com/semrel-extra/topo/compare/v1.7.0...v1.8.0) (2023-04-01)
+
+### Features
+* feat: add `traverseDeps` and `traverseQueue` helpers ([31c6c78](https://github.com/semrel-extra/topo/commit/31c6c785017eb46b1ff77606a3792e1f5aead187))
+
 ## [1.7.0](https://github.com/semrel-extra/topo/compare/v1.6.0...v1.7.0) (2023-03-28)
 
 ### Features
