@@ -4,7 +4,15 @@ import { dirname, join, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import micromatch from 'micromatch'
 
-import { getManifestsPaths, ITopoOptions, topo } from '../../main/ts/topo'
+import {
+  getManifestsPaths,
+  topo,
+  traverseQueue,
+  traverseDeps,
+  ITopoOptions,
+  IDepEntry,
+  IPackageEntry
+} from '../../main/ts/topo'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const fixtures = resolve(__dirname, '../fixtures')
@@ -249,6 +257,73 @@ test('`topo` throws error on duplicated pkg names', async () => {
     assert.instance(err, Error)
     assert.match(err.message, 'Duplicated pkg names: a')
   }
+})
+
+test('`traverseQueue` applies cb to each pkg topologically', async () => {
+  const cwd = resolve(fixtures, 'regular-monorepo')
+  const workspaces = ['packages/*']
+  const { queue, prev } = await topo({ cwd, workspaces })
+  const result: string[] = []
+  const cb = (name: string) => {
+    result.push(name)
+  }
+  await traverseQueue({ queue, prev, cb })
+
+  const expected = ['a', 'e', 'c']
+  assert.equal(result, expected)
+})
+
+test('`traversDeps` applies cb up to the deps tree', async () => {
+  const packages = {
+    a: {
+      name: 'a',
+      manifest: {
+        name: 'a',
+        version: '0.0.0'
+      }
+    },
+    b: {
+      name: 'b',
+      manifest: {
+        name: 'b',
+        version: '0.0.0',
+        dependencies: {
+          a: '*'
+        }
+      }
+    },
+    c: {
+      name: 'c',
+      manifest: {
+        name: 'c',
+        version: '0.0.0',
+        devDependencies: {
+          b: '*'
+        }
+      }
+    },
+    d: {
+      name: 'd',
+      manifest: {
+        name: 'd',
+        version: '0.0.0',
+        optionalDependencies: {
+          b: '*'
+        }
+      }
+    }
+  } as unknown as Record<string, IPackageEntry>
+  const pkg = packages['d']
+  const result: string[] = []
+  const cb = async ({ name, pkg }: IDepEntry) => {
+    result.push(name)
+    await traverseDeps({ pkg, packages, cb })
+  }
+
+  await traverseDeps({ packages, pkg, cb })
+
+  const expected = ['b', 'a']
+  assert.equal(result, expected)
 })
 
 test.run()

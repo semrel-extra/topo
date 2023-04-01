@@ -1,5 +1,5 @@
 import glob from 'fast-glob'
-import { analyze } from 'toposource'
+import { analyze, TTopoResult } from 'toposource'
 import { dirname, join, relative, resolve } from 'path'
 import { promises as fs } from 'fs'
 
@@ -7,6 +7,7 @@ import {
   ITopoOptionsNormalized,
   IPackageEntry,
   IPackageJson,
+  IPackageDeps,
   ITopoOptions,
   ITopoContext
 } from './interface'
@@ -165,4 +166,70 @@ export const slash = (path: string): string => {
   }
 
   return path.replace(/\\/g, '/')
+}
+
+export const traverseQueue = async ({
+  queue,
+  prev,
+  cb
+}: {
+  queue: TTopoResult['queue']
+  prev: TTopoResult['prev']
+  cb: (name: string) => any
+}) => {
+  const acc: Record<string, Promise<void>> = {}
+
+  return Promise.all(
+    queue.map(
+      name =>
+        (acc[name] = (async () => {
+          await Promise.all((prev.get(name) || []).map(p => acc[p]))
+          await cb(name)
+        })())
+    )
+  )
+}
+
+export interface IDepEntry {
+  name: string
+  version: string
+  scope: string
+  deps: IPackageDeps
+  parent: IPackageEntry
+  pkg: IPackageEntry
+}
+
+export const traverseDeps = async ({
+  packages,
+  pkg: parent,
+  scopes = [
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies'
+  ],
+  cb
+}: {
+  pkg: IPackageEntry
+  packages: Record<string, IPackageEntry>
+  scopes?: string[]
+  cb(depEntry: IDepEntry): any
+}) => {
+  const { manifest } = parent
+  const results: Promise<void>[] = []
+
+  for (let scope of scopes) {
+    const deps = manifest[scope as keyof IPackageJson] as IPackageDeps
+    if (!deps) continue
+
+    for (let [name, version] of Object.entries(deps)) {
+      const pkg = packages[name]
+      if (!pkg) continue
+      results.push(
+        Promise.resolve(cb({ name, version, scope, deps, pkg, parent }))
+      )
+    }
+  }
+
+  await Promise.all(results)
 }

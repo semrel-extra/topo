@@ -57,13 +57,41 @@ const graph = topo({
 ```
 
 ### `depFilter()`
-Applies filter to any kind of pkg dependencies to omit them from the graph
+Applies filter to any kind of pkg dependencies to omit them from the graph.
 ```ts
 const gpaph = topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root',
   depFilter: ({version}) => version.startsWith('workspace:') // include only workspace deps
 })
+```
+
+### `traverseDeps()`
+Iterates up to the pkg deps graph.
+```ts
+const {packages} = topo({
+  workspaces: ['packages/*'],
+  cwd: '/path/to/project/root'
+})
+const pkg = packages['pkg-a']
+const cb = async ({name, pkg}: IDepEntry) => {
+  await traverseDeps({pkg, packages, cb})
+}
+
+await traverseDeps({packages, pkg, cb})
+```
+
+### `traverseQueue()`
+Iterates over the queue of packages in the order of their dependencies.
+```ts
+const {queue, prev} = await topo({
+  workspaces: ['packages/*'],
+  cwd: '/path/to/project/root'
+})
+const cb = async (name: string) => {
+  // some async action
+}
+await traverseQueue({ queue, prev, cb })
 ```
 
 ## License

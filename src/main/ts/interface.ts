@@ -1,12 +1,14 @@
 import { TDepMap, TGraph } from 'toposource'
 
+export type IPackageDeps = Record<string, string>
+
 export interface IPackageJson {
   name: string
   workspaces?: string[]
-  dependencies?: Record<string, string>
-  devDependencies?: Record<string, string>
-  optionalDependencies?: Record<string, string>
-  peerDependencies?: Record<string, string>
+  dependencies?: IPackageDeps
+  devDependencies?: IPackageDeps
+  optionalDependencies?: IPackageDeps
+  peerDependencies?: IPackageDeps
 }
 
 export interface IPackageEntry {
