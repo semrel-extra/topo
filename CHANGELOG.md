@@ -1,3 +1,8 @@
+## [1.9.1](https://github.com/semrel-extra/topo/compare/v1.9.0...v1.9.1) (2023-04-02)
+
+### Fixes & improvements
+* refactor: inner deps iterator ([d641f97](https://github.com/semrel-extra/topo/commit/d641f97113c8d6cd31ad940796d358f960352aff))
+
 ## [1.9.0](https://github.com/semrel-extra/topo/compare/v1.8.1...v1.9.0) (2023-04-02)
 
 ### Features
