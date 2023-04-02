@@ -127,19 +127,20 @@ export const getGraph = (
   const edges = manifests
     .reduce<[string, string][]>((edges, pkg) => {
       const m = new Set()
-      for (const scope of scopes) {
-        for (const [name, version] of Object.entries(
-          (pkg[scope as keyof IPackageJson] as IPackageDeps) || {}
-        )) {
+      iterateDeps(
+        pkg,
+        ({ name, version, scope }) => {
           if (
             !m.has(name) &&
             nodes.includes(name) &&
             depFilter({ name, version, scope })
           ) {
-            edges.push([name, pkg.name]) && m.add(name)
+            m.add(name)
+            edges.push([name, pkg.name])
           }
-        }
-      }
+        },
+        scopes
+      )
 
       return edges
     }, [])
@@ -224,18 +225,37 @@ export const traverseDeps = async ({
   const { manifest } = parent
   const results: Promise<void>[] = []
 
+  iterateDeps(
+    manifest,
+    ({ name, version, scope, deps }) => {
+      const pkg = packages[name]
+      if (!pkg) return
+      results.push(
+        Promise.resolve(cb({ name, version, scope, deps, pkg, parent }))
+      )
+    },
+    scopes
+  )
+
+  await Promise.all(results)
+}
+
+const iterateDeps = (
+  manifest: IPackageJson,
+  cb: (ctx: {
+    scope: string
+    name: string
+    version: string
+    deps: IPackageDeps
+  }) => any,
+  scopes = defaultScopes
+) => {
   for (const scope of scopes) {
     const deps = manifest[scope as keyof IPackageJson] as IPackageDeps
     if (!deps) continue
 
     for (let [name, version] of Object.entries(deps)) {
-      const pkg = packages[name]
-      if (!pkg) continue
-      results.push(
-        Promise.resolve(cb({ name, version, scope, deps, pkg, parent }))
-      )
+      cb({ name, version, deps, scope })
     }
   }
-
-  await Promise.all(results)
 }
