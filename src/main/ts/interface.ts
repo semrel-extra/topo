@@ -23,6 +23,7 @@ export interface IPackageEntry {
 export interface IDepEntry {
   name: string
   version: string
+  scope: string
 }
 
 export type ITopoOptions = Partial<ITopoOptionsNormalized>

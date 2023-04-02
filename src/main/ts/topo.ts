@@ -14,6 +14,13 @@ import {
 
 export * from './interface'
 
+const defaultScopes = [
+  'dependencies',
+  'devDependencies',
+  'peerDependencies',
+  'optionalDependencies'
+]
+
 export const getPackages = async (
   options: ITopoOptionsNormalized
 ): Promise<Record<string, IPackageEntry>> => {
@@ -110,7 +117,8 @@ export const topo = async (
 
 export const getGraph = (
   manifests: IPackageJson[],
-  depFilter: ITopoOptionsNormalized['depFilter']
+  depFilter: ITopoOptionsNormalized['depFilter'],
+  scopes = defaultScopes
 ): {
   nodes: string[]
   edges: [string, string][]
@@ -118,17 +126,20 @@ export const getGraph = (
   const nodes = manifests.map(({ name }) => name).sort()
   const edges = manifests
     .reduce<[string, string][]>((edges, pkg) => {
-      Object.entries({
-        ...pkg.dependencies,
-        ...pkg.devDependencies,
-        ...pkg.optionalDependencies,
-        ...pkg.peerDependencies
-      }).forEach(
-        ([name, version]) =>
-          depFilter({ name, version }) &&
-          nodes.includes(name) &&
-          edges.push([name, pkg.name])
-      )
+      const m = new Set()
+      for (const scope of scopes) {
+        for (const [name, version] of Object.entries(
+          (pkg[scope as keyof IPackageJson] as IPackageDeps) || {}
+        )) {
+          if (
+            !m.has(name) &&
+            nodes.includes(name) &&
+            depFilter({ name, version, scope })
+          ) {
+            edges.push([name, pkg.name]) && m.add(name)
+          }
+        }
+      }
 
       return edges
     }, [])
@@ -202,12 +213,7 @@ export interface IDepEntry {
 export const traverseDeps = async ({
   packages,
   pkg: parent,
-  scopes = [
-    'dependencies',
-    'devDependencies',
-    'peerDependencies',
-    'optionalDependencies'
-  ],
+  scopes = defaultScopes,
   cb
 }: {
   pkg: IPackageEntry
@@ -218,7 +224,7 @@ export const traverseDeps = async ({
   const { manifest } = parent
   const results: Promise<void>[] = []
 
-  for (let scope of scopes) {
+  for (const scope of scopes) {
     const deps = manifest[scope as keyof IPackageJson] as IPackageDeps
     if (!deps) continue
 
