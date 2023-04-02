@@ -1,3 +1,8 @@
+## [1.9.0](https://github.com/semrel-extra/topo/compare/v1.8.1...v1.9.0) (2023-04-02)
+
+### Features
+* feat: add `scope` field to `IDepEntry` ([0647fcc](https://github.com/semrel-extra/topo/commit/0647fcc40df0f872ac7368784de0b3412a2ec4b5))
+
 ## [1.8.1](https://github.com/semrel-extra/topo/compare/v1.8.0...v1.8.1) (2023-04-01)
 
 ### Fixes & improvements
