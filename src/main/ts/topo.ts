@@ -1,10 +1,11 @@
 import glob from 'fast-glob'
 import { analyze, TTopoResult } from 'toposource'
-import { dirname, join, relative, resolve } from 'path'
-import { promises as fs } from 'fs'
+import { dirname, join, relative, resolve } from 'node:path'
+import { promises as fs } from 'node:fs'
 
 import {
   ITopoOptionsNormalized,
+  IDepEntry,
   IPackageEntry,
   IPackageJson,
   IPackageDeps,
@@ -202,15 +203,6 @@ export const traverseQueue = async ({
   )
 }
 
-export interface IDepEntry {
-  name: string
-  version: string
-  scope: string
-  deps: IPackageDeps
-  parent: IPackageEntry
-  pkg: IPackageEntry
-}
-
 export const traverseDeps = async ({
   packages,
   pkg: parent,
@@ -220,7 +212,13 @@ export const traverseDeps = async ({
   pkg: IPackageEntry
   packages: Record<string, IPackageEntry>
   scopes?: string[]
-  cb(depEntry: IDepEntry): any
+  cb(
+    depEntry: IDepEntry & {
+      deps: IPackageDeps
+      parent: IPackageEntry
+      pkg: IPackageEntry
+    }
+  ): any
 }) => {
   const { manifest } = parent
   const results: Promise<void>[] = []
@@ -242,12 +240,7 @@ export const traverseDeps = async ({
 
 const iterateDeps = (
   manifest: IPackageJson,
-  cb: (ctx: {
-    scope: string
-    name: string
-    version: string
-    deps: IPackageDeps
-  }) => any,
+  cb: (ctx: IDepEntry & { deps: IPackageDeps }) => any,
   scopes = defaultScopes
 ) => {
   for (const scope of scopes) {
