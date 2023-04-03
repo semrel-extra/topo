@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/maintainability)](https://codeclimate.com/github/semrel-extra/topo/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/test_coverage)](https://codeclimate.com/github/semrel-extra/topo/test_coverage)
 
-Helper to resolve monorepo dependencies graph by workspaces
+Helper to resolve monorepo dependencies graph by package workspaces
 
 ## Install
 ```shell
@@ -69,6 +69,8 @@ const gpaph = topo({
 ### `traverseDeps()`
 Iterates up to the pkg deps graph.
 ```ts
+import {topo, traverseDeps} from '@semrel-extra/topo'
+
 const {packages} = topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root'
@@ -84,6 +86,8 @@ await traverseDeps({packages, pkg, cb})
 ### `traverseQueue()`
 Iterates over the queue of packages in the order of their dependencies.
 ```ts
+import {topo, traverseQueue} from '@semrel-extra/topo'
+
 const {queue, prev} = await topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root'
