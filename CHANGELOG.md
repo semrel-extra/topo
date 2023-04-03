@@ -1,3 +1,8 @@
+## [1.9.2](https://github.com/semrel-extra/topo/compare/v1.9.1...v1.9.2) (2023-04-03)
+
+### Fixes & improvements
+* docs: tweak up usage examples ([5be06ba](https://github.com/semrel-extra/topo/commit/5be06bafde370e8be06b6f5e372d9cb516ef18ae))
+
 ## [1.9.1](https://github.com/semrel-extra/topo/compare/v1.9.0...v1.9.1) (2023-04-02)
 
 ### Fixes & improvements
