@@ -1,3 +1,8 @@
+## [1.10.0](https://github.com/semrel-extra/topo/compare/v1.9.2...v1.10.0) (2023-04-08)
+
+### Features
+* feat: add `manifestRaw` field to `IPackageEntry` ([a833ba9](https://github.com/semrel-extra/topo/commit/a833ba93fe4ed0a85836cfd36be12161ad4c084b))
+
 ## [1.9.2](https://github.com/semrel-extra/topo/compare/v1.9.1...v1.9.2) (2023-04-03)
 
 ### Fixes & improvements
