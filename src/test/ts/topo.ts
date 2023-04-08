@@ -1,7 +1,8 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
-import { dirname, join, resolve } from 'path'
-import { fileURLToPath } from 'url'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import fs from 'node:fs'
 import micromatch from 'micromatch'
 
 import {
@@ -11,7 +12,8 @@ import {
   traverseDeps,
   ITopoOptions,
   IDepEntry,
-  IPackageEntry
+  IPackageEntry,
+  IDepEntryEnriched
 } from '../../main/ts/topo'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -52,6 +54,7 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
           name: 'a',
           private: true
         },
+        manifestRaw: '{\n  "name": "a",\n  "private": true\n}\n',
         manifestPath: join(cwd, 'packages/a/package.json'),
         path: 'packages/a',
         relPath: 'packages/a',
@@ -66,6 +69,9 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
           }
         },
         manifestPath: join(cwd, 'packages/c/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/c/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/c',
         relPath: 'packages/c',
         absPath: resolve(cwd, 'packages/c')
@@ -76,6 +82,9 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
           name: 'e'
         },
         manifestPath: join(cwd, 'packages/e/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/e/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/e',
         relPath: 'packages/e',
         absPath: resolve(cwd, 'packages/e')
@@ -87,6 +96,9 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
         name: 'root'
       },
       manifestPath: join(cwd, 'package.json'),
+      manifestRaw: fs.readFileSync(join(cwd, 'package.json'), {
+        encoding: 'utf8'
+      }),
       path: '/',
       relPath: '/',
       absPath: resolve(cwd)
@@ -130,6 +142,9 @@ test('`topo` applies filter/pkgFilter', async () => {
           }
         },
         manifestPath: join(cwd, 'packages/c/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/c/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/c',
         relPath: 'packages/c',
         absPath: resolve(cwd, 'packages/c')
@@ -140,6 +155,9 @@ test('`topo` applies filter/pkgFilter', async () => {
           name: 'e'
         },
         manifestPath: join(cwd, 'packages/e/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/e/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/e',
         relPath: 'packages/e',
         absPath: resolve(cwd, 'packages/e')
@@ -151,6 +169,9 @@ test('`topo` applies filter/pkgFilter', async () => {
         name: 'root'
       },
       manifestPath: join(cwd, 'package.json'),
+      manifestRaw: fs.readFileSync(join(cwd, 'package.json'), {
+        encoding: 'utf8'
+      }),
       path: '/',
       relPath: '/',
       absPath: resolve(cwd)
@@ -187,6 +208,9 @@ test('`topo` applies depFilter', async () => {
           private: true
         },
         manifestPath: join(cwd, 'packages/a/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/a/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/a',
         relPath: 'packages/a',
         absPath: resolve(cwd, 'packages/a')
@@ -200,6 +224,9 @@ test('`topo` applies depFilter', async () => {
           }
         },
         manifestPath: join(cwd, 'packages/c/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/c/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/c',
         relPath: 'packages/c',
         absPath: resolve(cwd, 'packages/c')
@@ -210,6 +237,9 @@ test('`topo` applies depFilter', async () => {
           name: 'e'
         },
         manifestPath: join(cwd, 'packages/e/package.json'),
+        manifestRaw: fs.readFileSync(join(cwd, 'packages/e/package.json'), {
+          encoding: 'utf8'
+        }),
         path: 'packages/e',
         relPath: 'packages/e',
         absPath: resolve(cwd, 'packages/e')
@@ -221,6 +251,9 @@ test('`topo` applies depFilter', async () => {
         name: 'root'
       },
       manifestPath: join(cwd, 'package.json'),
+      manifestRaw: fs.readFileSync(join(cwd, 'package.json'), {
+        encoding: 'utf8'
+      }),
       path: '/',
       relPath: '/',
       absPath: resolve(cwd)
@@ -315,7 +348,7 @@ test('`traversDeps` applies cb up to the deps tree', async () => {
   } as unknown as Record<string, IPackageEntry>
   const pkg = packages['d']
   const result: string[] = []
-  const cb = async ({ name, pkg }: IDepEntry) => {
+  const cb = async ({ name, pkg }: IDepEntryEnriched) => {
     result.push(name)
     await traverseDeps({ pkg, packages, cb })
   }

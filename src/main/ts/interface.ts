@@ -14,6 +14,7 @@ export interface IPackageJson {
 export interface IPackageEntry {
   name: string
   manifest: IPackageJson
+  manifestRaw: string
   manifestPath: string
   path: string
   absPath: string
@@ -24,6 +25,12 @@ export interface IDepEntry {
   name: string
   version: string
   scope: string
+}
+
+export interface IDepEntryEnriched extends IDepEntry {
+  deps: IPackageDeps
+  parent: IPackageEntry
+  pkg: IPackageEntry
 }
 
 export type ITopoOptions = Partial<ITopoOptionsNormalized>

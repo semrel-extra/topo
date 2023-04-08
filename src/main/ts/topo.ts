@@ -6,6 +6,7 @@ import { promises as fs } from 'node:fs'
 import {
   ITopoOptionsNormalized,
   IDepEntry,
+  IDepEntryEnriched,
   IPackageEntry,
   IPackageJson,
   IPackageDeps,
@@ -27,34 +28,36 @@ export const getPackages = async (
 ): Promise<Record<string, IPackageEntry>> => {
   const { pkgFilter } = options
   const manifestsPaths = await getManifestsPaths(options)
-  const manifests: IPackageJson[] = await Promise.all(
-    manifestsPaths.map(p => readJsonFile(p))
+  const entries = await Promise.all(
+    manifestsPaths.map(async manifestPath => {
+      const absPath = dirname(manifestPath)
+      const relPath = relative(options.cwd, absPath)
+      const manifestRaw = await fs.readFile(manifestPath, 'utf8')
+      const manifest = JSON.parse(manifestRaw)
+      return {
+        name: manifest.name,
+        manifestRaw,
+        manifestPath,
+        manifest,
+        path: relPath, // legacy
+        relPath,
+        absPath
+      }
+    })
   )
 
-  checkDuplicates(manifests)
+  checkDuplicates(entries)
 
-  return manifests.reduce<Record<string, IPackageEntry>>((m, p, i) => {
-    const absPath = dirname(manifestsPaths[i])
-    const relPath = relative(options.cwd, absPath)
-    const entry = {
-      name: p.name,
-      manifest: p,
-      manifestPath: manifestsPaths[i],
-      path: relPath, // legacy
-      relPath,
-      absPath
-    }
-
+  return entries.reduce<Record<string, IPackageEntry>>((m, entry) => {
     if (pkgFilter(entry)) {
-      m[p.name] = entry
+      m[entry.name] = entry
     }
-
     return m
   }, {})
 }
 
-const checkDuplicates = (manifests: IPackageJson[]): void => {
-  const duplicates = manifests
+const checkDuplicates = (named: { name: string }[]): void => {
+  const duplicates = named
     .map(m => m.name)
     .filter((e, i, a) => a.indexOf(e) !== i)
   if (duplicates.length > 0) {
@@ -64,12 +67,14 @@ const checkDuplicates = (manifests: IPackageJson[]): void => {
 
 export const getRootPackage = async (cwd: string): Promise<IPackageEntry> => {
   const manifestPath = resolve(cwd, 'package.json')
-  const manifest = await readJsonFile(manifestPath)
+  const manifestRaw = await fs.readFile(manifestPath, 'utf8')
+  const manifest = JSON.parse(manifestRaw)
 
   return {
     name: manifest.name,
     manifest,
     manifestPath,
+    manifestRaw,
     path: '/',
     relPath: '/',
     absPath: dirname(manifestPath)
@@ -166,9 +171,6 @@ export const getManifestsPaths = async ({
     }
   )
 
-const readJsonFile = async (filepath: string) =>
-  JSON.parse(await fs.readFile(filepath, 'utf8'))
-
 // https://github.com/sindresorhus/slash/blob/b5cdd12272f94cfc37c01ac9c2b4e22973e258e5/index.js#L1
 export const slash = (path: string): string => {
   const isExtendedLengthPath = /^\\\\\?\\/.test(path)
@@ -212,13 +214,7 @@ export const traverseDeps = async ({
   pkg: IPackageEntry
   packages: Record<string, IPackageEntry>
   scopes?: string[]
-  cb(
-    depEntry: IDepEntry & {
-      deps: IPackageDeps
-      parent: IPackageEntry
-      pkg: IPackageEntry
-    }
-  ): any
+  cb(depEntry: IDepEntryEnriched): any
 }) => {
   const { manifest } = parent
   const results: Promise<void>[] = []
