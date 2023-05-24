@@ -26,6 +26,7 @@ test('`getManifestsPaths` returns absolute package.json refs', async () => {
     await getManifestsPaths({
       cwd,
       workspaces,
+      workspacesExtra: [],
       filter: () => true,
       depFilter: () => true,
       pkgFilter: () => true
@@ -289,6 +290,14 @@ test('`topo` processes bolt monorepos', async () => {
   const cwd = resolve(fixtures, 'bolt-monorepo')
   const result = await topo({ cwd })
   assert.equal(result.nodes, ['a', 'c', 'e'])
+})
+
+test('`topo` injects packages to workspaces via workspacesExtra', async () => {
+  const cwd = resolve(fixtures, 'regular-monorepo')
+  const workspaces = ['packages/*']
+  const workspacesExtra = ['!packages/e']
+  const result = await topo({ cwd, workspacesExtra, workspaces })
+  assert.equal(result.nodes, ['a', 'c'])
 })
 
 test('`topo` throws error on duplicated pkg names', async () => {

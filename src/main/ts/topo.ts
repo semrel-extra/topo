@@ -90,7 +90,8 @@ export const topo = async (
     filter = _ => true,
     pkgFilter = filter,
     depFilter = _ => true,
-    workspaces
+    workspaces,
+    workspacesExtra = []
   } = options
   const root = await getRootPackage(cwd)
   const _options: ITopoOptionsNormalized = {
@@ -98,7 +99,11 @@ export const topo = async (
     filter,
     depFilter,
     pkgFilter,
-    workspaces: workspaces || (await getWorkspaces(root))
+    workspacesExtra,
+    workspaces: [
+      ...(workspaces || (await getWorkspaces(root))),
+      ...workspacesExtra
+    ]
   }
   const packages = await getPackages(_options)
   const { edges, nodes } = getGraph(
