@@ -279,6 +279,18 @@ test('`topo` applies depFilter', async () => {
   assert.equal(result, expected)
 })
 
+test('`topo` processes pnpm monorepos', async () => {
+  const cwd = resolve(fixtures, 'pnpm-monorepo')
+  const result = await topo({ cwd })
+  assert.equal(result.nodes, ['c', 'e']) // see pnpm-workspace.yaml filter
+})
+
+test('`topo` processes bolt monorepos', async () => {
+  const cwd = resolve(fixtures, 'bolt-monorepo')
+  const result = await topo({ cwd })
+  assert.equal(result.nodes, ['a', 'c', 'e'])
+})
+
 test('`topo` throws error on duplicated pkg names', async () => {
   const cwd = resolve(fixtures, 'broken-monorepo')
   const workspaces = ['packages/*']

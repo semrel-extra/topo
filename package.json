@@ -11,7 +11,8 @@
   "exports": {
     "require": "./target/es5/index.cjs",
     "import": "./target/es6/index.mjs",
-    "module": "./target/es6/index.mjs"
+    "module": "./target/es6/index.mjs",
+    "default": "./target/es6/index.mjs"
   },
   "scripts": {
     "build": "yarn build:es6 && yarn build:es5",
@@ -51,10 +52,12 @@
   "homepage": "https://github.com/semrel-extra/topo#readme",
   "dependencies": {
     "fast-glob": "^3.2.12",
+    "js-yaml": "^4.1.0",
     "toposource": "^1.1.3",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
     "@types/micromatch": "^4.0.2",
     "@types/node": "^18.15.11",
     "c8": "^7.13.0",
