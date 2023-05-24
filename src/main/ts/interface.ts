@@ -5,6 +5,9 @@ export type IPackageDeps = Record<string, string>
 export interface IPackageJson {
   name: string
   workspaces?: string[]
+  bolt?: {
+    workspaces?: string[]
+  }
   dependencies?: IPackageDeps
   devDependencies?: IPackageDeps
   optionalDependencies?: IPackageDeps
