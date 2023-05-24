@@ -66,6 +66,16 @@ const gpaph = topo({
 })
 ```
 
+### `workspacesExtra`
+Injects extra pattern to the resolved `workspaces` value from `package.json` / `pnpm-workspace.yaml`
+```ts
+const gpaph = topo({
+  workspacesExtra: ['!packages/foo'],
+  cwd: '/path/to/project/root'
+})
+
+```
+
 ### `traverseDeps()`
 Iterates up to the pkg deps graph.
 ```ts
