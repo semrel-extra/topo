@@ -292,6 +292,12 @@ test('`topo` processes bolt monorepos', async () => {
   assert.equal(result.nodes, ['a', 'c', 'e'])
 })
 
+test('`topo` processes yarn monorepos with `workspaces.packages` directive', async () => {
+  const cwd = resolve(fixtures, 'yarn-monorepo')
+  const result = await topo({ cwd })
+  assert.equal(result.nodes, ['a', 'c', 'e'])
+})
+
 test('`topo` injects packages to workspaces via workspacesExtra', async () => {
   const cwd = resolve(fixtures, 'regular-monorepo')
   const workspaces = ['packages/*']

@@ -101,7 +101,7 @@ export const topo = async (
     pkgFilter,
     workspacesExtra,
     workspaces: [
-      ...(workspaces || (await getWorkspaces(root))),
+      ...(workspaces || (await extractWorkspaces(root))),
       ...workspacesExtra
     ]
   }
@@ -128,8 +128,10 @@ export const topo = async (
   }
 }
 
-export const getWorkspaces = async (root: IPackageEntry) =>
-  root.manifest.workspaces ||
+export const extractWorkspaces = async (root: IPackageEntry) =>
+  (Array.isArray(root.manifest.workspaces)
+    ? root.manifest.workspaces
+    : root.manifest.workspaces?.packages) ||
   root.manifest.bolt?.workspaces ||
   (await (async () => {
     try {
