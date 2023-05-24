@@ -5,28 +5,24 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./target/es5/index.cjs",
-  "types": "./target/es5/index.d.ts",
+  "main": "./target/cjs/index.cjs",
+  "types": "./target/dts/index.d.ts",
   "type": "module",
   "exports": {
-    "require": "./target/es5/index.cjs",
-    "import": "./target/es6/index.mjs",
-    "module": "./target/es6/index.mjs",
-    "default": "./target/es6/index.mjs"
+    "types": "./target/dts/index.d.ts",
+    "require": "./target/cjs/index.cjs",
+    "import": "./target/esm/index.mjs",
+    "module": "./target/esm/index.mjs",
+    "default": "./target/esm/index.mjs"
   },
   "scripts": {
-    "build": "yarn build:es6 && yarn build:es5",
-    "build:es6": "yarn build:es6:target && yarn build:es6:libdef && yarn build:es6:ext",
-    "build:es6:target": "node ./build.es6.cjs",
-    "build:es6:libdef": "tsc --emitDeclarationOnly --outDir target/es6",
-    "build:es6:ext": "tsc-esm-fix --target=target/es6 --ext=.mjs",
-    "build:es5": "yarn build:es5:target && yarn build:es5:libdef && yarn build:es5:ext",
-    "build:es5:target": "node ./build.es5.cjs",
-    "build:es5:libdef": "tsc --emitDeclarationOnly --outDir target/es5",
-    "build:es5:ext": "rename 's/\\.js$/\\.cjs/' target/es5/*.js",
-    "test": "yarn test:unit && yarn lint",
-    "test:unit": "c8 -r html -r text -r lcov loadr -- uvu 'src/test/' -i fixturess",
-    "lint": "prettier --write src",
+    "build": "concurrently 'npm:build:*'",
+    "build:esm": "node ./src/scripts/build.cjs",
+    "build:cjs": "node ./src/scripts/build.cjs --cjs",
+    "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
+    "test": "concurrently 'npm:test:*'",
+    "test:unit": "c8 -r html -r text -r lcov loadr -- uvu './src/test/' -i fixturess",
+    "test:lint": "prettier --write src",
     "postupdate": "yarn && yarn build && yarn test"
   },
   "repository": {
@@ -69,7 +65,8 @@
     "tsc-esm-fix": "^2.20.14",
     "tsm": "^2.3.0",
     "typescript": "^5.0.4",
-    "uvu": "^0.5.6"
+    "uvu": "^0.5.6",
+    "concurrently": "^8.0.1"
   },
   "prettier": {
     "arrowParens": "avoid",

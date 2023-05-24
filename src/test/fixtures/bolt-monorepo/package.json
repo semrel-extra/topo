@@ -1,6 +1,8 @@
 {
   "name": "root",
   "bolt": {
-    "workspaces": ["packages/*"]
+    "workspaces": [
+      "packages/*"
+    ]
   }
 }

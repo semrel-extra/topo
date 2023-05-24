@@ -1,4 +1,4 @@
-const { topo } = require('../../../target/es5/index.cjs')
+const { topo } = require('@semrel-extra/topo')
 const { test } = require('uvu')
 const { resolve } = require('path')
 const assert = require('uvu/assert')
