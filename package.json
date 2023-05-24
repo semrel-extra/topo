@@ -1,6 +1,6 @@
 {
   "name": "@semrel-extra/topo",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Helper to resolve monorepo dependencies graph",
   "publishConfig": {
     "access": "public"

@@ -1,3 +1,8 @@
+## [1.12.1](https://github.com/semrel-extra/topo/compare/v1.12.0...v1.12.1) (2023-05-24)
+
+### Fixes & improvements
+* fix: handle yarn `wokspaces.packages` directive ([979cc99](https://github.com/semrel-extra/topo/commit/979cc99c42fc2fd01fb85fcc7b5d9ef9b89e38f5))
+
 ## [1.12.0](https://github.com/semrel-extra/topo/compare/v1.11.0...v1.12.0) (2023-05-24)
 
 ### Features
