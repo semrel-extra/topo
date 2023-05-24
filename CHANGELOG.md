@@ -1,3 +1,8 @@
+## [1.11.0](https://github.com/semrel-extra/topo/compare/v1.10.0...v1.11.0) (2023-05-24)
+
+### Features
+* feat: provide support for bolt and pnpm workspaces ([b23752c](https://github.com/semrel-extra/topo/commit/b23752cdf0f30b99c65442067fd96e73ce04b755))
+
 ## [1.10.0](https://github.com/semrel-extra/topo/compare/v1.9.2...v1.10.0) (2023-04-08)
 
 ### Features
