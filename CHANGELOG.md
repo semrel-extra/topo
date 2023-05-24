@@ -1,3 +1,8 @@
+## [1.12.0](https://github.com/semrel-extra/topo/compare/v1.11.0...v1.12.0) (2023-05-24)
+
+### Features
+* feat: add workspacesExtra option ([0a1c55c](https://github.com/semrel-extra/topo/commit/0a1c55ccd18dbe5c881b7a80b00881999133f355))
+
 ## [1.11.0](https://github.com/semrel-extra/topo/compare/v1.10.0...v1.11.0) (2023-05-24)
 
 ### Features
