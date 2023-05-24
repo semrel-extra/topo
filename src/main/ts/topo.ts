@@ -90,7 +90,7 @@ export const topo = async (
     filter = _ => true,
     pkgFilter = filter,
     depFilter = _ => true,
-    workspaces,
+    workspaces
   } = options
   const root = await getRootPackage(cwd)
   const _options: ITopoOptionsNormalized = {
@@ -98,7 +98,7 @@ export const topo = async (
     filter,
     depFilter,
     pkgFilter,
-    workspaces: workspaces || await getWorkspaces(root)
+    workspaces: workspaces || (await getWorkspaces(root))
   }
   const packages = await getPackages(_options)
   const { edges, nodes } = getGraph(
@@ -126,15 +126,17 @@ export const topo = async (
 export const getWorkspaces = async (root: IPackageEntry) =>
   root.manifest.workspaces ||
   root.manifest.bolt?.workspaces ||
-  await (async () => {
+  (await (async () => {
     try {
       const pnpmWsCfg = resolve(root.absPath, 'pnpm-workspace.yaml')
-      const contents = yaml.load(await fs.readFile(pnpmWsCfg, 'utf8')) as {packages: string[]}
+      const contents = yaml.load(await fs.readFile(pnpmWsCfg, 'utf8')) as {
+        packages: string[]
+      }
       return contents.packages
     } catch {
       return null
     }
-  })() ||
+  })()) ||
   []
 
 export const getGraph = (

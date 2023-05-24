@@ -1,4 +1,4 @@
-import { topo } from '../../../target/es6/index.mjs'
+import { topo } from '@semrel-extra/topo'
 import { test } from 'uvu'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
