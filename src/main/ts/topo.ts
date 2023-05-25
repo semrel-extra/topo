@@ -52,7 +52,10 @@ const checkDuplicates = (named: { name: string }[]): void => {
   }
 }
 
-export const getPackage = async (cwd: string, manifestPath: string): Promise<IPackageEntry> => {
+export const getPackage = async (
+  cwd: string,
+  manifestPath: string
+): Promise<IPackageEntry> => {
   const absPath = dirname(manifestPath)
   const relPath = relative(cwd, absPath) || '.'
   const manifestRelPath = relative(cwd, manifestPath)

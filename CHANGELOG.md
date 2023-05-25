@@ -1,3 +1,8 @@
+## [1.13.0](https://github.com/semrel-extra/topo/compare/v1.12.1...v1.13.0) (2023-05-25)
+
+### Features
+* feat: add `manifestRelPath` to IPackageEntry ([6949ae0](https://github.com/semrel-extra/topo/commit/6949ae0aba35e032ec5c48356f4f263f06a3037f))
+
 ## [1.12.1](https://github.com/semrel-extra/topo/compare/v1.12.0...v1.12.1) (2023-05-24)
 
 ### Fixes & improvements
