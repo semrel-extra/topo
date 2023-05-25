@@ -19,6 +19,8 @@ export interface IPackageEntry {
   manifest: IPackageJson
   manifestRaw: string
   manifestPath: string
+  manifestRelPath: string
+  manifestAbsPath: string
   path: string
   absPath: string
   relPath: string

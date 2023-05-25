@@ -30,21 +30,7 @@ export const getPackages = async (
   const { pkgFilter } = options
   const manifestsPaths = await getManifestsPaths(options)
   const entries = await Promise.all(
-    manifestsPaths.map(async manifestPath => {
-      const absPath = dirname(manifestPath)
-      const relPath = relative(options.cwd, absPath)
-      const manifestRaw = await fs.readFile(manifestPath, 'utf8')
-      const manifest = JSON.parse(manifestRaw)
-      return {
-        name: manifest.name,
-        manifestRaw,
-        manifestPath,
-        manifest,
-        path: relPath, // legacy
-        relPath,
-        absPath
-      }
-    })
+    manifestsPaths.map(manifestPath => getPackage(options.cwd, manifestPath))
   )
 
   checkDuplicates(entries)
@@ -66,19 +52,22 @@ const checkDuplicates = (named: { name: string }[]): void => {
   }
 }
 
-export const getRootPackage = async (cwd: string): Promise<IPackageEntry> => {
-  const manifestPath = resolve(cwd, 'package.json')
+export const getPackage = async (cwd: string, manifestPath: string): Promise<IPackageEntry> => {
+  const absPath = dirname(manifestPath)
+  const relPath = relative(cwd, absPath) || '.'
+  const manifestRelPath = relative(cwd, manifestPath)
   const manifestRaw = await fs.readFile(manifestPath, 'utf8')
   const manifest = JSON.parse(manifestRaw)
-
   return {
     name: manifest.name,
-    manifest,
-    manifestPath,
     manifestRaw,
-    path: '/',
-    relPath: '/',
-    absPath: dirname(manifestPath)
+    manifestPath, // legacy
+    manifestRelPath,
+    manifestAbsPath: manifestPath,
+    manifest,
+    path: relPath, // legacy
+    relPath,
+    absPath
   }
 }
 
@@ -93,7 +82,7 @@ export const topo = async (
     workspaces,
     workspacesExtra = []
   } = options
-  const root = await getRootPackage(cwd)
+  const root = await getPackage(cwd, resolve(cwd, 'package.json'))
   const _options: ITopoOptionsNormalized = {
     cwd,
     filter,
