@@ -4,6 +4,7 @@ export type IPackageDeps = Record<string, string>
 
 export interface IPackageJson {
   name: string
+  version: string
   workspaces?: string[] | { packages?: string[] }
   bolt?: {
     workspaces?: string[]
