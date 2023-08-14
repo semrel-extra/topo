@@ -1,3 +1,8 @@
+## [1.14.0](https://github.com/semrel-extra/topo/compare/v1.13.1...v1.14.0) (2023-08-14)
+
+### Features
+* feat: export `iterateDeps` helper ([0eed98f](https://github.com/semrel-extra/topo/commit/0eed98fec072db6dcb8fb7cc050c2c2df2cb2255))
+
 ## [1.13.1](https://github.com/semrel-extra/topo/compare/v1.13.0...v1.13.1) (2023-08-14)
 
 ### Fixes & improvements
