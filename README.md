@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/maintainability)](https://codeclimate.com/github/semrel-extra/topo/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/test_coverage)](https://codeclimate.com/github/semrel-extra/topo/test_coverage)
 
-Helper to resolve monorepo dependencies graph by package workspaces
+> Helpers to assist monorepo dependencies traversals
 
 ## Install
 ```shell
@@ -106,6 +106,26 @@ const cb = async (name: string) => {
   // some async action
 }
 await traverseQueue({ queue, prev, cb })
+```
+
+### `iterateDeps()`
+Walks through the package dependencies and applies the `cb()` for each.
+```ts
+const results: any[] = []
+const manifest = {
+  name: 'foo',
+  version: '0.0.0',
+  dependencies: {
+    bar: '1.0.0'
+  },
+  devDependencies: {
+    baz: '2.0.0'
+  }
+}
+
+iterateDeps(manifest, ({ name, version, scope, deps }) => {
+  results.push({ name, version, scope, deps })
+})
 ```
 
 ## License

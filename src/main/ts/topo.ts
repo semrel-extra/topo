@@ -251,7 +251,7 @@ export const traverseDeps = async ({
   await Promise.all(results)
 }
 
-const iterateDeps = (
+export const iterateDeps = (
   manifest: IPackageJson,
   cb: (ctx: IDepEntry & { deps: IPackageDeps }) => any,
   scopes = defaultScopes

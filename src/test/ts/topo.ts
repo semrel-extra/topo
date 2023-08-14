@@ -10,6 +10,7 @@ import {
   topo,
   traverseQueue,
   traverseDeps,
+  iterateDeps,
   ITopoOptions,
   IDepEntry,
   IPackageEntry,
@@ -406,6 +407,39 @@ test('`traversDeps` applies cb up to the deps tree', async () => {
 
   const expected = ['b', 'a']
   assert.equal(result, expected)
+})
+
+test('`iterateDeps` walks through the pkg deps', () => {
+  const results: any[] = []
+  const manifest = {
+    name: 'foo',
+    version: '0.0.0',
+    dependencies: {
+      bar: '1.0.0'
+    },
+    devDependencies: {
+      baz: '2.0.0'
+    }
+  }
+
+  iterateDeps(manifest, ({ name, version, scope, deps }) => {
+    results.push({ name, version, scope, deps })
+  })
+
+  assert.equal(results, [
+    {
+      name: 'bar',
+      version: '1.0.0',
+      scope: 'dependencies',
+      deps: manifest.dependencies
+    },
+    {
+      name: 'baz',
+      version: '2.0.0',
+      scope: 'devDependencies',
+      deps: manifest.devDependencies
+    }
+  ])
 })
 
 test.run()
