@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/semrel-extra/topo/compare/v1.13.0...v1.13.1) (2023-08-14)
+
+### Fixes & improvements
+* fix: add missing `version` to `IPackageJson` iface ([19a9be3](https://github.com/semrel-extra/topo/commit/19a9be36abf03a6d201ea7eb63a81bc2c9366152))
+* perf: up deps ([526d51c](https://github.com/semrel-extra/topo/commit/526d51cdcb38e54dba011d3836e63764fe11dee7))
+* fix: deps revision ([86efb9e](https://github.com/semrel-extra/topo/commit/86efb9e7026df79d9c207fc83c148b31731ee734))
+
 ## [1.13.0](https://github.com/semrel-extra/topo/compare/v1.12.1...v1.13.0) (2023-05-25)
 
 ### Features
