@@ -47,25 +47,24 @@
   },
   "homepage": "https://github.com/semrel-extra/topo#readme",
   "dependencies": {
-    "fast-glob": "^3.2.12",
+    "fast-glob": "^3.3.1",
     "js-yaml": "^4.1.0",
     "toposource": "^1.1.4"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
     "@types/micromatch": "^4.0.2",
-    "@types/node": "^20.2.3",
-    "c8": "^7.13.0",
-    "esbuild": "^0.19.0",
-    "esbuild-node-externals": "^1.7.0",
+    "@types/node": "^20.5.0",
+    "c8": "^8.0.1",
+    "esbuild": "^0.19.2",
+    "esbuild-node-externals": "^1.8.0",
     "loadr": "^0.1.1",
     "micromatch": "^4.0.5",
-    "prettier": "^2.8.8",
-    "tsc-esm-fix": "^2.20.14",
+    "prettier": "^3.0.1",
     "tsm": "^2.3.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.1.6",
     "uvu": "^0.5.6",
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.2.0"
   },
   "prettier": {
     "arrowParens": "avoid",
