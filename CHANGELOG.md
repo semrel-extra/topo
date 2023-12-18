@@ -1,3 +1,8 @@
+## [1.14.1](https://github.com/semrel-extra/topo/compare/v1.14.0...v1.14.1) (2023-12-18)
+
+### Fixes & improvements
+* perf: up deps ([ffd57a9](https://github.com/semrel-extra/topo/commit/ffd57a9fbbbdeca0a0d0ac45f02f05f4a0a5a663))
+
 ## [1.14.0](https://github.com/semrel-extra/topo/compare/v1.13.1...v1.14.0) (2023-08-14)
 
 ### Features
