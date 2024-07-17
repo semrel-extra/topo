@@ -56,7 +56,7 @@
     "@types/micromatch": "^4.0.6",
     "@types/node": "^20.10.5",
     "c8": "^8.0.1",
-    "esbuild": "^0.21.0",
+    "esbuild": "^0.23.0",
     "esbuild-node-externals": "^1.11.0",
     "loadr": "^0.1.1",
     "micromatch": "^4.0.5",
