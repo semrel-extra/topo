@@ -111,9 +111,9 @@ await traverseQueue({ queue, prev, cb })
 
 ## Development
 
-Use Node.js 26 and Yarn 1.22. The published CommonJS and ESM builds are tested on
-Node.js 18, 20, 22, 24 and 26. Public exports and legacy package path fields are
-preserved.
+Use Node.js 26 and Yarn 1.22. The published CommonJS and ESM builds are smoke-tested
+on Linux with Node.js 18 and 26, and Windows with Node.js 26. Public exports and
+legacy package path fields are preserved.
 
 ```sh
 yarn install --frozen-lockfile
@@ -126,7 +126,23 @@ without changing files. The build uses TypeScript 7 for declarations and esbuild
 for JavaScript. `js-yaml` stays on the maintained 4.x line to preserve parsing of
 existing workspace files, including YAML merge keys.
 
+`yarn test:smoke` checks the built CommonJS and ESM APIs using only production
+dependencies and Node.js's test runner. `yarn test:it` remains an alias for it.
+
 ## CI and publishing
+
+CI builds once and shares the JavaScript and declaration files through an
+artifact named `build`. Unit tests, lint and type checks run once on Linux/Node.js
+26. The smoke matrix and release job download that same build instead of rebuilding
+it.
+
+Build and test jobs have only read access to repository contents, no OIDC
+permission and no repository secrets. Checkout credentials are not persisted.
+Tests upload coverage as a separate artifact named `coverage`. On pushes to
+`master`, the release job sends it to Qlty before publishing, including when there is no new package
+version to publish. A later publishing failure does not prevent that upload.
+Only the release job gets publishing permissions; npm lifecycle scripts are
+disabled there so building and testing stay in the unprivileged jobs.
 
 The release job uses npm trusted publishing through GitHub OIDC. Configure a
 trusted publisher for `@semrel-extra/topo` with:
