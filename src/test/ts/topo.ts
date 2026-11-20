@@ -2,6 +2,7 @@ import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { tmpdir } from 'node:os'
 import fs from 'node:fs'
 import micromatch from 'micromatch'
 
@@ -11,11 +12,13 @@ import {
   traverseQueue,
   traverseDeps,
   iterateDeps,
+  slash
+} from '../../main/ts/topo'
+import type {
   ITopoOptions,
-  IDepEntry,
   IPackageEntry,
   IDepEntryEnriched
-} from '../../main/ts/topo'
+} from '../../main/ts/interface.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const fixtures = resolve(__dirname, '../fixtures')
@@ -38,6 +41,13 @@ test('`getManifestsPaths` returns absolute package.json refs', async () => {
   )
 
   assert.equal(result, expected)
+})
+
+test('`slash` preserves extended and Unicode paths', () => {
+  assert.is(slash('C:\\packages\\a'), 'C:/packages/a')
+  assert.is(slash('\\\\?\\C:\\packages\\a'), '\\\\?\\C:\\packages\\a')
+  assert.is(slash('C:\\пакеты\\a'), 'C:\\пакеты\\a')
+  assert.is(slash('/packages/a'), '/packages/a')
 })
 
 test('`topo` returns monorepo digest: release queue, deps graph, package manifests', async () => {
@@ -128,6 +138,36 @@ test('`topo` returns monorepo digest: release queue, deps graph, package manifes
   }
 
   assert.equal(result, expected)
+})
+
+test('`topo` merges components connected by a later source', async () => {
+  const cwd = fs.mkdtempSync(join(tmpdir(), 'topo-bridge-'))
+  const manifests = [
+    { name: 'a' },
+    { name: 'b' },
+    { name: 'c' },
+    { name: 'x', dependencies: { a: '*', c: '*' } },
+    { name: 'y', dependencies: { b: '*', c: '*' } }
+  ]
+
+  try {
+    fs.writeFileSync(
+      join(cwd, 'package.json'),
+      JSON.stringify({ name: 'root', workspaces: ['packages/*'] })
+    )
+    for (const manifest of manifests) {
+      const dir = join(cwd, 'packages', manifest.name)
+      fs.mkdirSync(dir, { recursive: true })
+      fs.writeFileSync(join(dir, 'package.json'), JSON.stringify(manifest))
+    }
+
+    const { graphs } = await topo({ cwd })
+    assert.equal(graphs, [
+      { nodes: new Set(['a', 'b', 'c', 'x', 'y']), sources: ['a', 'b', 'c'] }
+    ])
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true })
+  }
 })
 
 test('`topo` applies filter/pkgFilter', async () => {
@@ -398,9 +438,9 @@ test('`traversDeps` applies cb up to the deps tree', async () => {
   } as unknown as Record<string, IPackageEntry>
   const pkg = packages['d']
   const result: string[] = []
-  const cb = async ({ name, pkg }: IDepEntryEnriched) => {
+  const cb = async ({ name, pkg: dependency }: IDepEntryEnriched) => {
     result.push(name)
-    await traverseDeps({ pkg, packages, cb })
+    await traverseDeps({ pkg: dependency, packages, cb })
   }
 
   await traverseDeps({ packages, pkg, cb })

@@ -1,8 +1,8 @@
 # @semrel-extra/topo
 
-[![CI](https://github.com/semrel-extra/topo/workflows/CI/badge.svg)](https://github.com/semrel-extra/topo/actions)
-[![Maintainability](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/maintainability)](https://codeclimate.com/github/semrel-extra/topo/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/48b31cd38b905b729beb/test_coverage)](https://codeclimate.com/github/semrel-extra/topo/test_coverage)
+[![CI](https://github.com/semrel-extra/topo/actions/workflows/ci.yaml/badge.svg?branch=master&event=push)](https://github.com/semrel-extra/topo/actions/workflows/ci.yaml)
+[![Maintainability](https://qlty.sh/gh/semrel-extra/projects/topo/maintainability.svg)](https://qlty.sh/gh/semrel-extra/projects/topo)
+[![Code Coverage](https://qlty.sh/gh/semrel-extra/projects/topo/coverage.svg)](https://qlty.sh/gh/semrel-extra/projects/topo)
 
 > Helpers to assist monorepo dependencies traversals
 
@@ -15,7 +15,7 @@ yarn add @semrel-extra/topo
 ```ts
 import { topo } from '@semrel-extra/topo'
 
-const graph = topo({
+const graph = await topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root'
 })
@@ -49,17 +49,17 @@ const graph = topo({
 ### `pkgFilter() / filter()`
 Filter option is a function: gets `IPackageEntry` as argument, returns `boolean`
 ```ts
-const graph = topo({
+const graph = await topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root',
-  filter: ({manifest}) => !manifest.private // to omit private packages from graph
+  filter: ({manifest}) => !manifest.name.startsWith('internal-') // omit internal packages
 })
 ```
 
 ### `depFilter()`
 Applies filter to any kind of pkg dependencies to omit them from the graph.
 ```ts
-const gpaph = topo({
+const graph = await topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root',
   depFilter: ({version}) => version.startsWith('workspace:') // include only workspace deps
@@ -69,7 +69,7 @@ const gpaph = topo({
 ### `workspacesExtra`
 Injects extra pattern to the resolved `workspaces` value from `package.json` / `pnpm-workspace.yaml`
 ```ts
-const gpaph = topo({
+const graph = await topo({
   workspacesExtra: ['!packages/foo'],
   cwd: '/path/to/project/root'
 })
@@ -80,13 +80,14 @@ const gpaph = topo({
 Iterates up to the pkg deps graph.
 ```ts
 import {topo, traverseDeps} from '@semrel-extra/topo'
+import type {IDepEntryEnriched} from '@semrel-extra/topo'
 
-const {packages} = topo({
+const {packages} = await topo({
   workspaces: ['packages/*'],
   cwd: '/path/to/project/root'
 })
 const pkg = packages['pkg-a']
-const cb = async ({name, pkg}: IDepEntry) => {
+const cb = async ({pkg}: IDepEntryEnriched) => {
   await traverseDeps({pkg, packages, cb})
 }
 
@@ -108,25 +109,45 @@ const cb = async (name: string) => {
 await traverseQueue({ queue, prev, cb })
 ```
 
-### `iterateDeps()`
-Walks through the package dependencies and applies the `cb()` for each.
-```ts
-const results: any[] = []
-const manifest = {
-  name: 'foo',
-  version: '0.0.0',
-  dependencies: {
-    bar: '1.0.0'
-  },
-  devDependencies: {
-    baz: '2.0.0'
-  }
-}
+## Development
 
-iterateDeps(manifest, ({ name, version, scope, deps }) => {
-  results.push({ name, version, scope, deps })
-})
+Use Node.js 26 and Yarn 1.22. The published CommonJS and ESM builds are tested on
+Node.js 18, 20, 22, 24 and 26. Public exports and legacy package path fields are
+preserved.
+
+```sh
+yarn install --frozen-lockfile
+yarn build
+yarn test
 ```
+
+`yarn lint` runs Oxlint; `yarn format` applies Prettier. Tests check formatting
+without changing files. The build uses TypeScript 7 for declarations and esbuild
+for JavaScript. `js-yaml` stays on the maintained 4.x line to preserve parsing of
+existing workspace files, including YAML merge keys.
+
+## CI and publishing
+
+The release job uses npm trusted publishing through GitHub OIDC. Configure a
+trusted publisher for `@semrel-extra/topo` with:
+
+- Organization: `semrel-extra`
+- Repository: `topo`
+- Workflow filename: `ci.yaml`
+- Environment: `gh-cicd`
+- Permission: `npm publish`
+
+The first successful publication must happen within two days of creating the
+publisher. An expired configuration must be deleted and recreated. See
+[npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
+
+Publishing uses the built-in `GITHUB_TOKEN`. Committer details can be set through
+the `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL` repository variables, and SSH
+signing through the optional `GIT_SIGN_KEY` secret.
+
+Coverage uploads use Qlty OIDC; enable the project in Qlty before the first upload.
+CodeQL is configured in `codeql-analysis.yml` for JavaScript/TypeScript and GitHub
+Actions. Keep GitHub's CodeQL default setup disabled while this workflow is in use.
 
 ## License
 [MIT](./LICENSE)

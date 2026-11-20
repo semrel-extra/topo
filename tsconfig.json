@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
     "rootDir": "./src/main/ts/",
-    "baseUrl": "./src/main/ts/",
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
     "target": "esnext",
     "strict": true,
     "noImplicitAny": true,
     "declaration": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
   "include": [
     "src/main/**/*"

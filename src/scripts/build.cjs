@@ -1,10 +1,10 @@
 const esbuild = require('esbuild')
-const { nodeExternalsPlugin } = require('esbuild-node-externals')
 
 const esmConfig = {
   entryPoints: ['./src/main/ts/index.ts'],
   outdir: './target/esm',
   bundle: true,
+  packages: 'external',
   minify: true,
   sourcemap: true,
   sourcesContent: false,
@@ -14,7 +14,6 @@ const esmConfig = {
   outExtension: {
     '.js': '.mjs'
   },
-  plugins: [nodeExternalsPlugin()],
   tsconfig: './tsconfig.json'
 }
 

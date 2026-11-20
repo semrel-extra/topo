@@ -1,2 +1,2 @@
-export { topo, traverseDeps, traverseQueue } from './topo'
-export * from './interface'
+export { topo, traverseDeps, traverseQueue } from './topo.js'
+export * from './interface.js'
