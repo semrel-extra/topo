@@ -21,9 +21,10 @@
     "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
     "lint": "oxlint src",
     "format": "prettier --write src",
-    "test": "node ./node_modules/.bin/concurrently 'npm:test:*'",
+    "test": "node ./node_modules/.bin/concurrently npm:test:unit npm:test:lint npm:test:types npm:test:smoke",
     "test:unit": "c8 -r html -r text -r lcov --exclude 'src/test/**' -o ./target/coverage node --import tsx ./node_modules/uvu/bin.js src/test/ts",
-    "test:it": "uvu src/test/js",
+    "test:it": "npm run test:smoke",
+    "test:smoke": "node --test src/test/smoke/index.cjs src/test/smoke/index.mjs",
     "test:lint": "oxlint src && prettier --check src",
     "test:types": "tsc -p src/test/types/tsconfig.json",
     "postupdate": "yarn && yarn build && yarn test"

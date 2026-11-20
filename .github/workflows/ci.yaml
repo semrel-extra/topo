@@ -5,13 +5,11 @@ on: [push, pull_request]
 permissions: {}
 
 jobs:
-  test_push:
-    name: Test on push
-    if: github.event_name == 'push'
+  build:
+    name: Build
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -29,25 +27,71 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Run tests
-        timeout-minutes: 5
-        run: yarn test
-
-      - name: Upload coverage to Qlty
-        if: github.ref == 'refs/heads/master'
-        uses: qltysh/qlty-action/coverage@a46e29cfd54065ae8a2c6b1fd3446aed1b1a4257 # v2.8.0
+      - name: Upload build
+        uses: actions/upload-artifact@v7
         with:
-          oidc: true
-          files: target/coverage/lcov.info
+          name: build
+          path: |
+            target/cjs
+            target/esm
+            target/dts
+          if-no-files-found: error
+          retention-days: 7
 
-  test_pr:
-    name: Test PR (Node v${{ matrix.node-version }}, OS ${{ matrix.os }})
-    if: github.event_name == 'pull_request'
+  test:
+    name: Unit tests, lint and types
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      - name: Fetch deps
+        run: yarn install --frozen-lockfile
+
+      - name: Download build
+        uses: actions/download-artifact@v8
+        with:
+          name: build
+          path: target
+
+      - name: Run checks
+        timeout-minutes: 5
+        run: |
+          yarn test:unit
+          yarn test:lint
+          yarn test:types
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: target/coverage/lcov.info
+          if-no-files-found: error
+          retention-days: 7
+
+  smoke:
+    name: Smoke (Node v${{ matrix.node-version }}, ${{ matrix.os }})
+    needs: build
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        node-version: [18, 20, 22, 24, 26]
+        include:
+          - os: ubuntu-latest
+            node-version: 18
+          - os: ubuntu-latest
+            node-version: 26
+          - os: windows-latest
+            node-version: 26
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -57,40 +101,38 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup build tools
+      # Yarn 1 checks devDependency engines even with --production.
+      - name: Setup install tools
         uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
 
-      - name: Fetch deps
-        run: yarn install --frozen-lockfile
+      - name: Fetch runtime deps
+        run: yarn install --production --frozen-lockfile --ignore-scripts
 
-      - name: Build and check
-        run: |
-          yarn build
-          yarn test:lint
-          yarn test:types
+      - name: Download build
+        uses: actions/download-artifact@v8
+        with:
+          name: build
+          path: target
 
       - name: Setup runtime Node.js
+        if: matrix.node-version != 26
         uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Run compatibility tests
+      - name: Run smoke tests
         timeout-minutes: 5
-        run: |
-          node --import tsx ./node_modules/uvu/bin.js src/test/ts
-          yarn test:it
+        run: npm run test:smoke
 
   release:
     name: Release
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    needs: test_push
+    needs: [test, smoke]
     environment: gh-cicd
     runs-on: ubuntu-latest
     permissions:
-      checks: read
-      statuses: write
       contents: write
       packages: write
       id-token: write
@@ -106,11 +148,23 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Fetch deps
-        run: yarn install --frozen-lockfile
+      - name: Download coverage
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage
+          path: target/coverage
 
-      - name: Build
-        run: yarn build
+      - name: Upload coverage to Qlty
+        uses: qltysh/qlty-action/coverage@a46e29cfd54065ae8a2c6b1fd3446aed1b1a4257 # v2.8.0
+        with:
+          oidc: true
+          files: target/coverage/lcov.info
+
+      - name: Download build
+        uses: actions/download-artifact@v8
+        with:
+          name: build
+          path: target
 
       - name: Semantic Release
         env:
@@ -121,4 +175,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_OIDC: true
           NPM_PROVENANCE: true
+          npm_config_ignore_scripts: true
         run: npm_config_yes=true npx zx-semrel
