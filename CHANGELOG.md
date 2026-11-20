@@ -1,3 +1,8 @@
+## [1.14.2](https://github.com/semrel-extra/topo/compare/v1.14.1...v1.14.2) (2026-11-20)
+
+### Fixes & improvements
+* perf: update toposource to v1.2.2, js-yaml to v4.3.2 ([87524e9](https://github.com/semrel-extra/topo/commit/87524e932e2405c095a2989d50805e301fc2f563))
+
 ## [1.14.1](https://github.com/semrel-extra/topo/compare/v1.14.0...v1.14.1) (2023-12-18)
 
 ### Fixes & improvements
