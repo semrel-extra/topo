@@ -1,9 +1,15 @@
-const { topo } = require('@semrel-extra/topo')
+const { topo, traverseDeps, traverseQueue } = require('@semrel-extra/topo')
 const { test } = require('uvu')
 const { resolve } = require('path')
 const assert = require('uvu/assert')
 
 const fixtures = resolve(__dirname, '../fixtures')
+
+test('package exposes the CommonJS API', () => {
+  for (const fn of [topo, traverseDeps, traverseQueue]) {
+    assert.type(fn, 'function')
+  }
+})
 
 test('`topo` returns monorepo release queue', async () => {
   const cwd = resolve(fixtures, 'regular-monorepo')

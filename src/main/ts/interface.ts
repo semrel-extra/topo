@@ -1,4 +1,4 @@
-import { TDepMap, TGraph } from 'toposource'
+import type { TDepMap, TGraph } from 'toposource'
 
 export type IPackageDeps = Record<string, string>
 

@@ -1,10 +1,11 @@
 import { dirname, join, relative, resolve } from 'node:path'
 import { promises as fs } from 'node:fs'
 import glob from 'fast-glob'
-import { analyze, TTopoResult } from 'toposource'
+import { analyze } from 'toposource'
+import type { TTopoResult } from 'toposource'
 import yaml from 'js-yaml'
 
-import {
+import type {
   ITopoOptionsNormalized,
   IDepEntry,
   IDepEntryEnriched,
@@ -13,9 +14,9 @@ import {
   IPackageDeps,
   ITopoOptions,
   ITopoContext
-} from './interface'
+} from './interface.js'
 
-export * from './interface'
+export * from './interface.js'
 
 const defaultScopes = [
   'dependencies',
@@ -79,9 +80,9 @@ export const topo = async (
 ): Promise<ITopoContext> => {
   const {
     cwd = process.cwd(),
-    filter = _ => true,
+    filter = () => true,
     pkgFilter = filter,
-    depFilter = _ => true,
+    depFilter = () => true,
     workspaces,
     workspacesExtra = []
   } = options
@@ -148,7 +149,7 @@ export const getGraph = (
 } => {
   const nodes = manifests.map(({ name }) => name).sort()
   const edges = manifests
-    .reduce<[string, string][]>((edges, pkg) => {
+    .reduce<[string, string][]>((acc, pkg) => {
       const m = new Set()
       iterateDeps(
         pkg,
@@ -159,13 +160,13 @@ export const getGraph = (
             depFilter({ name, version, scope })
           ) {
             m.add(name)
-            edges.push([name, pkg.name])
+            acc.push([name, pkg.name])
           }
         },
         scopes
       )
 
-      return edges
+      return acc
     }, [])
     .sort()
 
@@ -190,8 +191,8 @@ export const getManifestsPaths = async ({
 
 // https://github.com/sindresorhus/slash/blob/b5cdd12272f94cfc37c01ac9c2b4e22973e258e5/index.js#L1
 export const slash = (path: string): string => {
-  const isExtendedLengthPath = /^\\\\\?\\/.test(path)
-  const hasNonAscii = /[^\u0000-\u0080]+/.test(path) // eslint-disable-line no-control-regex
+  const isExtendedLengthPath = path.startsWith('\\\\?\\')
+  const hasNonAscii = /[^\u0000-\u0080]+/.test(path) // oxlint-disable-line no-control-regex
 
   if (isExtendedLengthPath || hasNonAscii) {
     return path
@@ -230,7 +231,7 @@ export const traverseDeps = async ({
 }: {
   pkg: IPackageEntry
   packages: Record<string, IPackageEntry>
-  scopes?: string[]
+  scopes?: string[] | undefined
   cb(depEntry: IDepEntryEnriched): any
 }) => {
   const { manifest } = parent

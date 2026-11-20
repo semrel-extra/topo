@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>semrel-extra/.github:renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "Preserve YAML 4 parsing of existing workspace files",
+      "matchPackageNames": ["js-yaml"],
+      "allowedVersions": "<5"
+    }
   ]
 }

@@ -12,17 +12,20 @@
     "types": "./target/dts/index.d.ts",
     "require": "./target/cjs/index.cjs",
     "import": "./target/esm/index.mjs",
-    "module": "./target/esm/index.mjs",
     "default": "./target/esm/index.mjs"
   },
   "scripts": {
-    "build": "concurrently 'npm:build:*'",
+    "build": "node ./node_modules/.bin/concurrently 'npm:build:*'",
     "build:esm": "node ./src/scripts/build.cjs",
     "build:cjs": "node ./src/scripts/build.cjs --cjs",
     "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
-    "test": "concurrently 'npm:test:*'",
-    "test:unit": "c8 -r html -r text -r lcov loadr -- uvu './src/test/' -i fixturess",
-    "test:lint": "prettier --write src",
+    "lint": "oxlint src",
+    "format": "prettier --write src",
+    "test": "node ./node_modules/.bin/concurrently 'npm:test:*'",
+    "test:unit": "c8 -r html -r text -r lcov --exclude 'src/test/**' -o ./target/coverage node --import tsx ./node_modules/uvu/bin.js src/test/ts",
+    "test:it": "uvu src/test/js",
+    "test:lint": "oxlint src && prettier --check src",
+    "test:types": "tsc -p src/test/types/tsconfig.json",
     "postupdate": "yarn && yarn build && yarn test"
   },
   "repository": {
@@ -30,7 +33,9 @@
     "url": "git+https://github.com/semrel-extra/topo.git"
   },
   "files": [
-    "target",
+    "target/cjs",
+    "target/esm",
+    "target/dts",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
@@ -47,24 +52,23 @@
   },
   "homepage": "https://github.com/semrel-extra/topo#readme",
   "dependencies": {
-    "fast-glob": "^3.3.2",
-    "js-yaml": "^4.1.0",
-    "toposource": "^1.2.0"
+    "fast-glob": "^3.3.3",
+    "js-yaml": "^4.3.2",
+    "toposource": "^1.2.2"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
-    "@types/micromatch": "^4.0.6",
-    "@types/node": "^20.10.5",
-    "c8": "^8.0.1",
-    "esbuild": "^0.28.0",
-    "esbuild-node-externals": "^1.11.0",
-    "loadr": "^0.1.1",
-    "micromatch": "^4.0.5",
-    "prettier": "^3.1.1",
-    "tsm": "^2.3.0",
-    "typescript": "^5.3.3",
-    "uvu": "^0.5.6",
-    "concurrently": "^8.2.2"
+    "@types/micromatch": "^4.0.10",
+    "@types/node": "^26.6.6",
+    "c8": "^12.0.0",
+    "concurrently": "^10.0.7",
+    "esbuild": "^0.28.2",
+    "micromatch": "^4.0.8",
+    "oxlint": "^1.94.0",
+    "prettier": "^3.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "uvu": "^0.5.6"
   },
   "prettier": {
     "arrowParens": "avoid",
@@ -72,5 +76,9 @@
     "semi": false,
     "singleQuote": true,
     "trailingComma": "none"
+  },
+  "resolutions": {
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.1"
   }
 }
